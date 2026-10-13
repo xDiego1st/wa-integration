@@ -18,12 +18,12 @@ Begitu di-install, aplikasi Anda **langsung mendapatkan halaman manajemen WhatsA
 - **Dukungan Media Lengkap**: Kirim file faktur PDF (`sendDocument`), foto bukti pembayaran (`sendImage`), dan media lainnya.
 - **Isolasi Multi-Tenant**: Setiap aplikasi konsumen memiliki kredensial API Key dan sesi Baileys terisolasi.
 - **Webhook HMAC-SHA256**: Menerima pesan masuk dan tanda terima status delivery secara otomatis di `/waku/api/webhook`.
-- **Artisan CLI**: Monitor status, uji kirim pesan, dan uninstaller bersih (`php artisan wa:status`, `php artisan wa:test-send`, `php artisan wa:uninstall`).
+- **Artisan CLI Otomatis**: Inisialisasi satu langkah (`php artisan waku:install`), monitor status (`php artisan waku:status`), uji kirim pesan (`php artisan waku:test-send`), dan uninstaller bersih (`php artisan waku:uninstall`).
 - **Kompatibilitas Penuh**: Laravel 10, 11, 12, dan 13 (PHP 8.1 - 8.5).
 
 ---
 
-## 1. Instalasi
+## 1. Instalasi Otomatis (Satu Langkah)
 
 Jalankan perintah Composer di root proyek Laravel Anda:
 
@@ -31,21 +31,24 @@ Jalankan perintah Composer di root proyek Laravel Anda:
 composer require xdiego1st/wa-integration
 ```
 
-Publikasikan file konfigurasi:
+Lalu jalankan installer otomatis:
 ```bash
-php artisan vendor:publish --tag=whatsapp-config
+php artisan waku:install
 ```
 
-(Opsional) Publikasikan view jika ingin memodifikasi tampilan dashboard bawaan:
-```bash
-php artisan vendor:publish --tag=whatsapp-views
-```
+Perintah `php artisan waku:install` akan secara otomatis:
+1. Mempublikasikan berkas konfigurasi `config/whatsapp.php`.
+2. Menyematkan variabel lingkungan `WHATSAPP_*` langsung ke dalam berkas `.env` dan `.env.example`.
+3. Mendaftarkan rute dashboard unik terisolasi (`/waku/dashboard`) dan webhook (`/waku/api/webhook`).
+4. Menyegarkan seluruh cache aplikasi Laravel (`config:clear`, `route:clear`, `view:clear`).
+
+*(Opsi): Tambahkan flag `--with-views` jika ingin menyalin view dashboard ke `resources/views/vendor/whatsapp/`.*
 
 ---
 
-## 2. Konfigurasi Environment (`.env`)
+## 2. Lengkapi Kredensial Environment (`.env`)
 
-Buka file `.env` di proyek Laravel Anda dan tambahkan kredensial gateway:
+Buka berkas `.env` di proyek Laravel Anda dan isi kredensial yang telah disematkan otomatis:
 
 ```ini
 WHATSAPP_BASE_URL=http://localhost:3001/api/v1

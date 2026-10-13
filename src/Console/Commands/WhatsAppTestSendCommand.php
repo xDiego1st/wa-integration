@@ -7,7 +7,8 @@ use WaIntegration\Laravel\Facades\WhatsApp;
 
 class WhatsAppTestSendCommand extends Command
 {
-    protected $signature = 'wa:test-send {to : Phone number (e.g. 08123456789 or 628123456789)} {content : Text message to send}';
+    protected $signature = 'waku:test-send {to : Phone number (e.g. 08123456789 or 628123456789)} {content : Text message to send}';
+    protected $aliases = ['wa:test-send'];
     protected $description = 'Send a test WhatsApp message via the configured application connection';
 
     public function handle(): int

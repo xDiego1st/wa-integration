@@ -12,9 +12,16 @@ class WhatsAppUninstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'wa:uninstall 
+    protected $signature = 'waku:uninstall 
                             {--force : Jalankan pencopotan langsung tanpa konfirmasi interaktif} 
                             {--keep-env : Pertahankan variabel lingkungan WHATSAPP_* di berkas .env}';
+
+    /**
+     * The command aliases.
+     *
+     * @var array
+     */
+    protected $aliases = ['wa:uninstall'];
 
     /**
      * The console command description.

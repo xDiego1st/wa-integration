@@ -541,15 +541,15 @@ composer remove xdiego1st/wa-integration</code></pre>
                     </h3>
                     <p class="text-xs text-slate-600">Gunakan Packagist untuk lingkungan produksi atau Local Path jika pengembangan internal:</p>
                     <div class="relative group">
-                        <pre class="bg-slate-900 text-slate-100 font-mono text-xs p-4 rounded-xl overflow-x-auto"><code id="code-lc-install"># Opsi A: Packagist Resmi (Publik)
+                        <pre class="bg-slate-900 text-slate-100 font-mono text-xs p-4 rounded-xl overflow-x-auto"><code id="code-lc-install"># 1. Pasang paket via Composer
 composer require xdiego1st/wa-integration
 
-# Opsi B: Monorepo / Local Path (pada composer.json aplikasi Anda)
-# "repositories": [{"type": "path", "url": "../packages/laravel-wa-integration", "options": {"symlink": true}}]
-composer require xdiego1st/wa-integration:@dev
+# 2. Jalankan inisialisasi otomatis satu langkah (Publish config, .env, & rute)
+php artisan waku:install
 
-# Publikasikan konfigurasi
-php artisan vendor:publish --tag=whatsapp-config</code></pre>
+# (Opsi Monorepo / Local Path pada composer.json host)
+# "repositories": [{"type": "path", "url": "../packages/laravel-wa-integration", "options": {"symlink": true}}]
+# composer require xdiego1st/wa-integration:@dev && php artisan waku:install</code></pre>
                         <button type="button" onclick="copySnippet('code-lc-install')" class="absolute top-3 right-3 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono transition-colors">Salin</button>
                     </div>
                 </div>

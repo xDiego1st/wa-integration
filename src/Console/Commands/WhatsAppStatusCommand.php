@@ -7,7 +7,8 @@ use WaIntegration\Laravel\Facades\WhatsApp;
 
 class WhatsAppStatusCommand extends Command
 {
-    protected $signature = 'wa:status';
+    protected $signature = 'waku:status';
+    protected $aliases = ['wa:status'];
     protected $description = 'Check WhatsApp Integration Platform and Session status';
 
     public function handle(): int

@@ -5,6 +5,7 @@ namespace WaIntegration\Laravel;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use WaIntegration\Laravel\Services\WhatsAppClient;
+use WaIntegration\Laravel\Console\Commands\WhatsAppInstallCommand;
 use WaIntegration\Laravel\Console\Commands\WhatsAppStatusCommand;
 use WaIntegration\Laravel\Console\Commands\WhatsAppTestSendCommand;
 use WaIntegration\Laravel\Console\Commands\WhatsAppUninstallCommand;
@@ -41,6 +42,7 @@ class WhatsAppServiceProvider extends ServiceProvider
             ], 'whatsapp-views');
 
             $this->commands([
+                WhatsAppInstallCommand::class,
                 WhatsAppStatusCommand::class,
                 WhatsAppTestSendCommand::class,
                 WhatsAppUninstallCommand::class,
