@@ -108,7 +108,7 @@ class WhatsAppClient
 
     public function getPairing(?string $sessionId = null): WhatsAppResponse
     {
-        $sid = $sessionId ?? $this->resolveDefaultSessionId();
+        $sid = $sessionId ?? $this->resolveDefaultSessionId(true);
         if (!$sid) {
             return new WhatsAppResponse([], 404, 'No session specified or found');
         }
@@ -117,7 +117,7 @@ class WhatsAppClient
 
     public function connectSession(?string $sessionId = null): WhatsAppResponse
     {
-        $sid = $sessionId ?? $this->resolveDefaultSessionId();
+        $sid = $sessionId ?? $this->resolveDefaultSessionId(true);
         if (!$sid) {
             return new WhatsAppResponse([], 404, 'No session specified or found');
         }
@@ -152,7 +152,7 @@ class WhatsAppClient
         return $this->request('get', 'app/info');
     }
 
-    protected function resolveDefaultSessionId(): ?string
+    protected function resolveDefaultSessionId(bool $autoCreate = false): ?string
     {
         if ($this->defaultSessionId) {
             return $this->defaultSessionId;
@@ -161,6 +161,15 @@ class WhatsAppClient
         if ($sessions->isSuccessful() && !empty($sessions->data())) {
             return $sessions->data()[0]['id'] ?? null;
         }
+
+        if ($autoCreate) {
+            $appName = config('app.name', 'Default');
+            $created = $this->createSession($appName);
+            if ($created->isSuccessful() && !empty($created->data()['id'])) {
+                return $created->data()['id'];
+            }
+        }
+
         return null;
     }
 }

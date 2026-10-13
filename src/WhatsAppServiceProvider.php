@@ -18,15 +18,21 @@ class WhatsAppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/whatsapp.php',
+            __DIR__ . '/../config/waku.php',
+            'waku'
+        );
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/waku.php',
             'whatsapp'
         );
 
         $this->app->singleton(WhatsAppClient::class, function ($app) {
-            return new WhatsAppClient($app['config']['whatsapp'] ?? []);
+            $config = $app['config']['waku'] ?? $app['config']['whatsapp'] ?? [];
+            return new WhatsAppClient($config);
         });
 
         $this->app->alias(WhatsAppClient::class, 'whatsapp');
+        $this->app->alias(WhatsAppClient::class, 'waku');
     }
 
     public function boot(): void
@@ -34,12 +40,21 @@ class WhatsAppServiceProvider extends ServiceProvider
         // 1. Publish Configuration & Views
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../config/whatsapp.php' => config_path('whatsapp.php'),
+                __DIR__ . '/../config/waku.php' => config_path('waku.php'),
+            ], 'waku-config');
+
+            // Backward compatibility publish tag
+            $this->publishes([
+                __DIR__ . '/../config/waku.php' => config_path('waku.php'),
             ], 'whatsapp-config');
 
             $this->publishes([
                 __DIR__ . '/../resources/views' => resource_path('views/vendor/whatsapp'),
             ], 'whatsapp-views');
+
+            $this->publishes([
+                __DIR__ . '/../resources/views' => resource_path('views/vendor/waku'),
+            ], 'waku-views');
 
             $this->commands([
                 WhatsAppInstallCommand::class,
@@ -51,6 +66,7 @@ class WhatsAppServiceProvider extends ServiceProvider
 
         // 2. Load Views
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'whatsapp');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'waku');
 
         // 3. Register Livewire Component if Livewire is present
         if (class_exists(\Livewire\Livewire::class)) {
@@ -58,8 +74,8 @@ class WhatsAppServiceProvider extends ServiceProvider
         }
 
         // 4. Register Inbound Webhook Route (Default: /waku/api/webhook)
-        $webhookPrefix = config('whatsapp.webhook.prefix', 'waku/api/webhook');
-        $webhookMiddleware = config('whatsapp.webhook.middleware', ['api']);
+        $webhookPrefix = config('waku.webhook.prefix') ?? config('whatsapp.webhook.prefix', 'waku/api/webhook');
+        $webhookMiddleware = config('waku.webhook.middleware') ?? config('whatsapp.webhook.middleware', ['api']);
 
         Route::post($webhookPrefix, [WhatsAppWebhookController::class, 'handle'])
             ->name('waku.webhook')
@@ -71,12 +87,13 @@ class WhatsAppServiceProvider extends ServiceProvider
 
     protected function registerDashboardRoutes(): void
     {
-        if (!config('whatsapp.dashboard.enabled', true)) {
+        $enabled = config('waku.dashboard.enabled') ?? config('whatsapp.dashboard.enabled', true);
+        if (!$enabled) {
             return;
         }
 
-        $prefix = config('whatsapp.dashboard.prefix', 'waku/dashboard');
-        $middleware = config('whatsapp.dashboard.middleware', ['web']);
+        $prefix = config('waku.dashboard.prefix') ?? config('whatsapp.dashboard.prefix', 'waku/dashboard');
+        $middleware = config('waku.dashboard.middleware') ?? config('whatsapp.dashboard.middleware', ['web', 'auth']);
 
         Route::group([
             'prefix' => $prefix,

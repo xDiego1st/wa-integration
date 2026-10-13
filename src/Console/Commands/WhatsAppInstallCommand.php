@@ -87,20 +87,24 @@ class WhatsAppInstallCommand extends Command
         $this->table(
             ['Komponen', 'Status & Lokasi URL'],
             [
-                ['Berkas Konfigurasi', config_path('whatsapp.php')],
+                ['Berkas Konfigurasi', config_path('waku.php')],
                 ['Panel Manajemen Web', $dashboardUrl],
                 ['Endpoint Inbound Webhook', $webhookUrl],
                 ['Rute Terisolasi', 'Namespace waku.* (Bebas benturan rute host)'],
+                ['Autentikasi Dashboard', 'Wajib Login (Kustomisasi Role di config/waku.php)'],
             ]
         );
 
         $this->newLine();
         $this->line('<options=bold;fg=yellow>Langkah Selanjutnya:</>');
         $this->line('  1. Buka berkas <comment>.env</comment> dan lengkapi kredensial:');
-        $this->line('     <fg=gray>WHATSAPP_APP_ID=</><fg=cyan>wai_app_your_application_id</>');
-        $this->line('     <fg=gray>WHATSAPP_API_KEY=</><fg=cyan>wai_live_your_secret_api_key</>');
+        $this->line('     <fg=gray>WAKU_APP_ID=</><fg=cyan>wai_app_your_application_id</>');
+        $this->line('     <fg=gray>WAKU_API_KEY=</><fg=cyan>wai_live_your_secret_api_key</>');
         $this->newLine();
-        $this->line('  2. Buka browser Anda dan akses Panel Manajemen Waku:');
+        $this->line('  2. Sesuaikan hak akses role/user jika diperlukan di <comment>config/waku.php</comment>:');
+        $this->line('     <fg=gray>\'allowed_roles\' => [\'SUPER-ADMIN\', \'ADMIN\'],</>');
+        $this->newLine();
+        $this->line('  3. Buka browser Anda dan akses Panel Manajemen Waku:');
         $this->line("     <options=bold;fg=green>{$dashboardUrl}</>");
         $this->line('     (Pindai QR Code live multi-device untuk menghubungkan nomor WhatsApp Anda)');
         $this->newLine();
@@ -109,17 +113,17 @@ class WhatsAppInstallCommand extends Command
     }
 
     /**
-     * Mempublikasikan berkas config/whatsapp.php.
+     * Mempublikasikan berkas config/waku.php.
      */
     protected function publishConfiguration(): void
     {
-        $params = ['--tag' => 'whatsapp-config'];
+        $params = ['--tag' => 'waku-config'];
         if ($this->option('force')) {
             $params['--force'] = true;
         }
 
         $this->callSilently('vendor:publish', $params);
-        $this->line('  <info>✓</info> Berkas konfigurasi <comment>config/whatsapp.php</comment> berhasil dipublikasikan.');
+        $this->line('  <info>✓</info> Berkas konfigurasi <comment>config/waku.php</comment> berhasil dipublikasikan.');
     }
 
     /**
@@ -127,17 +131,17 @@ class WhatsAppInstallCommand extends Command
      */
     protected function publishViews(): void
     {
-        $params = ['--tag' => 'whatsapp-views'];
+        $params = ['--tag' => 'waku-views'];
         if ($this->option('force')) {
             $params['--force'] = true;
         }
 
         $this->callSilently('vendor:publish', $params);
-        $this->line('  <info>✓</info> Tampilan dashboard Blade berhasil disalin ke <comment>resources/views/vendor/whatsapp/</comment>.');
+        $this->line('  <info>✓</info> Tampilan dashboard Blade berhasil disalin ke <comment>resources/views/vendor/waku/</comment>.');
     }
 
     /**
-     * Menyematkan blok variabel lingkungan WHATSAPP_* ke berkas .env.
+     * Menyematkan blok variabel lingkungan WAKU_* ke berkas .env.
      */
     protected function injectEnvironmentVariables(string $filePath): void
     {
@@ -147,29 +151,30 @@ class WhatsAppInstallCommand extends Command
 
         $content = File::get($filePath);
 
-        // Cek apakah variabel WHATSAPP_ sudah terdaftar
-        if (str_contains($content, 'WHATSAPP_BASE_URL') || str_contains($content, 'WHATSAPP_APP_ID')) {
-            $this->line('  <comment>•</comment> Variabel WhatsApp sudah ada pada berkas <comment>' . basename($filePath) . '</comment> (dilewati).');
+        // Cek apakah variabel WAKU_ atau WHATSAPP_ sudah terdaftar
+        if (str_contains($content, 'WAKU_BASE_URL') || str_contains($content, 'WHATSAPP_BASE_URL')) {
+            $this->line('  <comment>•</comment> Variabel Waku/WhatsApp sudah ada pada berkas <comment>' . basename($filePath) . '</comment> (dilewati).');
             return;
         }
 
         $envBlock = <<<ENV
 
 # ==============================================================================
-# WAKU — PlatformCore WhatsApp Gateway Configuration
+# WAKU — PlatformCore WhatsApp Gateway Configuration (config/waku.php)
 # ==============================================================================
-WHATSAPP_BASE_URL=http://localhost:3001/api/v1
-WHATSAPP_APP_ID=
-WHATSAPP_API_KEY=
-WHATSAPP_WEBHOOK_SECRET=
+WAKU_BASE_URL=http://localhost:3001/api/v1
+WAKU_APP_ID=
+WAKU_API_KEY=
+WAKU_WEBHOOK_SECRET=
 
-# Pengaturan Rute Unik (Mencegah Benturan dengan Rute Aplikasi Host)
-WHATSAPP_DASHBOARD_ENABLED=true
-WHATSAPP_DASHBOARD_PREFIX=waku/dashboard
-WHATSAPP_WEBHOOK_PREFIX=waku/api/webhook
+# Pengaturan Rute Unik & Akses Dashboard
+WAKU_DASHBOARD_ENABLED=true
+WAKU_DASHBOARD_PREFIX=waku/dashboard
+WAKU_WEBHOOK_PREFIX=waku/api/webhook
+WAKU_AUTH_REQUIRED=true
 ENV;
 
         File::append($filePath, $envBlock . "\n");
-        $this->line('  <info>✓</info> Blok variabel konfigurasi WhatsApp berhasil disematkan ke <comment>' . basename($filePath) . '</comment>.');
+        $this->line('  <info>✓</info> Blok variabel konfigurasi Waku berhasil disematkan ke <comment>' . basename($filePath) . '</comment>.');
     }
 }

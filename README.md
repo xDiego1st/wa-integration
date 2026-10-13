@@ -13,7 +13,8 @@ Begitu di-install, aplikasi Anda **langsung mendapatkan halaman manajemen WhatsA
 
 ## Fitur Utama
 
-- **Halaman Manajemen Bawaan (`/waku/dashboard`)**: Dashboard visual instan untuk scan QR Code live (polling real-time), cek status koneksi, dan uji kirim pesan tanpa perlu menulis kode UI. Rute terisolasi bebas benturan dengan rute host.
+- **Halaman Manajemen Bawaan (`/waku/dashboard`)**: Dashboard visual instan dengan **Live QR Code Modal (Baileys Multi-Device)**, polling otomatis, status koneksi perangkat, dan live chat preview sandbox.
+- **Proteksi Hak Akses & Role (`config/waku.php`)**: Memerlukan login (`auth`) secara default. Anda dapat membatasi akses ke dashboard hanya untuk peran tertentu (`allowed_roles` seperti `SUPER-ADMIN`, `ADMIN`) atau email tertentu (`allowed_emails`).
 - **Expressive Facade**: Kirim pesan dalam 1 baris kode: `WhatsApp::send('08123456789', 'Halo!');`.
 - **Dukungan Media Lengkap**: Kirim file faktur PDF (`sendDocument`), foto bukti pembayaran (`sendImage`), dan media lainnya.
 - **Isolasi Multi-Tenant**: Setiap aplikasi konsumen memiliki kredensial API Key dan sesi Baileys terisolasi.
@@ -37,12 +38,12 @@ php artisan waku:install
 ```
 
 Perintah `php artisan waku:install` akan secara otomatis:
-1. Mempublikasikan berkas konfigurasi `config/whatsapp.php`.
-2. Menyematkan variabel lingkungan `WHATSAPP_*` langsung ke dalam berkas `.env` dan `.env.example`.
+1. Mempublikasikan berkas konfigurasi `config/waku.php`.
+2. Menyematkan variabel lingkungan `WAKU_*` langsung ke dalam berkas `.env` dan `.env.example`.
 3. Mendaftarkan rute dashboard unik terisolasi (`/waku/dashboard`) dan webhook (`/waku/api/webhook`).
 4. Menyegarkan seluruh cache aplikasi Laravel (`config:clear`, `route:clear`, `view:clear`).
 
-*(Opsi): Tambahkan flag `--with-views` jika ingin menyalin view dashboard ke `resources/views/vendor/whatsapp/`.*
+*(Opsi): Tambahkan flag `--with-views` jika ingin menyalin view dashboard ke `resources/views/vendor/waku/`.*
 
 ---
 
@@ -51,22 +52,49 @@ Perintah `php artisan waku:install` akan secara otomatis:
 Buka berkas `.env` di proyek Laravel Anda dan isi kredensial yang telah disematkan otomatis:
 
 ```ini
-WHATSAPP_BASE_URL=http://localhost:3001/api/v1
-WHATSAPP_APP_ID=wai_app_your_application_id
-WHATSAPP_API_KEY=wai_live_your_secret_api_key
-WHATSAPP_WEBHOOK_SECRET=wai_sec_your_webhook_secret
+WAKU_BASE_URL=http://localhost:3001/api/v1
+WAKU_APP_ID=wai_app_your_application_id
+WAKU_API_KEY=wai_live_your_secret_api_key
+WAKU_WEBHOOK_SECRET=wai_sec_your_webhook_secret
 
-# Pengaturan Rute Unik (Mencegah Benturan dengan Rute Aplikasi Host)
-WHATSAPP_DASHBOARD_ENABLED=true
-WHATSAPP_DASHBOARD_PREFIX=waku/dashboard
-WHATSAPP_WEBHOOK_PREFIX=waku/api/webhook
+# Pengaturan Rute Unik & Akses Dashboard
+WAKU_DASHBOARD_ENABLED=true
+WAKU_DASHBOARD_PREFIX=waku/dashboard
+WAKU_WEBHOOK_PREFIX=waku/api/webhook
+WAKU_AUTH_REQUIRED=true
 ```
 
-> **Tips:** Kredensial `WHATSAPP_APP_ID` dan `WHATSAPP_API_KEY` diperoleh dari menu **Multi-Application Hub** pada Gateway PlatformCore.
+*(Catatan: Paket juga tetap mendukung variabel lama `WHATSAPP_*` secara transparan).*
 
 ---
 
-## 3. Halaman Manajemen WhatsApp Langsung (`/waku/dashboard`)
+## 3. Pengaturan Hak Akses & Role (`config/waku.php`)
+
+Buka `config/waku.php` untuk membatasi pengguna yang berhak membuka `/waku/dashboard`:
+
+```php
+'dashboard' => [
+    'enabled' => env('WAKU_DASHBOARD_ENABLED', true),
+    'prefix' => env('WAKU_DASHBOARD_PREFIX', 'waku/dashboard'),
+    'middleware' => ['web', 'auth'],
+    'auth_required' => true,
+
+    // Batasi akses hanya untuk Role tertentu (Mendukung Spatie Permission / model User)
+    'allowed_roles' => [
+        'SUPER-ADMIN',
+        'ADMIN',
+    ],
+
+    // Atau batasi berdasarkan Email tertentu
+    'allowed_emails' => [
+        'admin@pekanbaru.go.id',
+    ],
+],
+```
+
+---
+
+## 4. Halaman Manajemen WhatsApp Langsung (`/waku/dashboard`)
 
 Setelah konfigurasi di atas selesai, buka browser Anda dan akses:
 

@@ -50,21 +50,21 @@ class WhatsAppUninstallCommand extends Command
         $this->info('Memulai pembersihan jejak paket...');
 
         // 1. Hapus Berkas Konfigurasi
-        $configPath = config_path('whatsapp.php');
-        if (File::exists($configPath)) {
-            File::delete($configPath);
-            $this->line('  <info>✓</info> Berkas konfigurasi <comment>config/whatsapp.php</comment> berhasil dihapus.');
-        } else {
-            $this->line('  <comment>•</comment> Berkas <comment>config/whatsapp.php</comment> tidak ditemukan (dilewati).');
+        foreach (['waku.php'] as $cfg) {
+            $configPath = config_path($cfg);
+            if (File::exists($configPath)) {
+                File::delete($configPath);
+                $this->line("  <info>✓</info> Berkas konfigurasi <comment>config/{$cfg}</comment> berhasil dihapus.");
+            }
         }
 
         // 2. Hapus Views Vendor
-        $viewsPath = resource_path('views/vendor/whatsapp');
-        if (File::isDirectory($viewsPath)) {
-            File::deleteDirectory($viewsPath);
-            $this->line('  <info>✓</info> Direktori view <comment>resources/views/vendor/whatsapp</comment> berhasil dihapus.');
-        } else {
-            $this->line('  <comment>•</comment> Direktori view kustom <comment>resources/views/vendor/whatsapp</comment> tidak ditemukan.');
+        foreach (['waku'] as $v) {
+            $viewsPath = resource_path("views/vendor/{$v}");
+            if (File::isDirectory($viewsPath)) {
+                File::deleteDirectory($viewsPath);
+                $this->line("  <info>✓</info> Direktori view <comment>resources/views/vendor/{$v}</comment> berhasil dihapus.");
+            }
         }
 
         // 3. Bersihkan Variabel .env (kecuali --keep-env)
@@ -101,7 +101,7 @@ class WhatsAppUninstallCommand extends Command
     }
 
     /**
-     * Membersihkan baris konfigurasi WHATSAPP_* dari berkas lingkungan.
+     * Membersihkan baris konfigurasi WAKU_* & WHATSAPP_* dari berkas lingkungan.
      */
     protected function cleanEnvFile(string $filePath): void
     {
@@ -116,11 +116,12 @@ class WhatsAppUninstallCommand extends Command
 
         foreach ($lines as $line) {
             $trimmed = trim($line);
-            // Cek apakah baris berkaitan dengan WhatsApp package
+            // Cek apakah baris berkaitan dengan Waku / WhatsApp package
             if (
+                str_starts_with($trimmed, 'WAKU_') ||
                 str_starts_with($trimmed, 'WHATSAPP_') ||
-                $trimmed === '# WhatsApp Gateway Integration' ||
-                $trimmed === '# Pengaturan Dashboard Bawaan'
+                str_contains($trimmed, 'WAKU — PlatformCore') ||
+                str_contains($trimmed, 'WhatsApp Gateway')
             ) {
                 $removedCount++;
                 continue;
@@ -129,11 +130,10 @@ class WhatsAppUninstallCommand extends Command
         }
 
         if ($removedCount > 0) {
-            // Hilangkan blank lines berlebih di akhir berkas
             $newContent = rtrim(implode("\n", $filteredLines)) . "\n";
             File::put($filePath, $newContent);
             $fileName = basename($filePath);
-            $this->line("  <info>✓</info> Menghapus <comment>{$removedCount}</comment> baris variabel WhatsApp dari berkas <comment>{$fileName}</comment>.");
+            $this->line("  <info>✓</info> Menghapus <comment>{$removedCount}</comment> baris variabel Waku/WhatsApp dari berkas <comment>{$fileName}</comment>.");
         }
     }
 }
