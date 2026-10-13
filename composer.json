@@ -1,0 +1,48 @@
+{
+  "name": "wa-integration/laravel",
+  "description": "Enterprise WhatsApp Gateway Client, Live Management Dashboard, and Multi-Tenant Integration for Laravel",
+  "keywords": [
+    "whatsapp",
+    "laravel",
+    "baileys",
+    "gateway",
+    "multi-device",
+    "messaging",
+    "notifications",
+    "dashboard"
+  ],
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "PlatformCore Team",
+      "email": "dev@platformcore.dev"
+    }
+  ],
+  "require": {
+    "php": "^8.1|^8.2|^8.3|^8.4",
+    "illuminate/support": "^10.0|^11.0|^12.0",
+    "illuminate/http": "^10.0|^11.0|^12.0",
+    "illuminate/console": "^10.0|^11.0|^12.0",
+    "illuminate/routing": "^10.0|^11.0|^12.0"
+  },
+  "suggest": {
+    "livewire/livewire": "Required for using the optional Livewire connection component (^3.0)"
+  },
+  "autoload": {
+    "psr-4": {
+      "WaIntegration\\Laravel\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "WaIntegration\\Laravel\\WhatsAppServiceProvider"
+      ],
+      "aliases": {
+        "WhatsApp": "WaIntegration\\Laravel\\Facades\\WhatsApp"
+      }
+    }
+  },
+  "minimum-stability": "stable"
+}
