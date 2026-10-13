@@ -17,6 +17,7 @@ use WaIntegration\Laravel\Services\WhatsAppResponse;
  * @method static WhatsAppResponse getPairing(?string $sessionId = null)
  * @method static WhatsAppResponse connectSession(?string $sessionId = null)
  * @method static WhatsAppResponse disconnectSession(?string $sessionId = null)
+ * @method static WhatsAppResponse deleteSession(string $sessionId)
  * @method static WhatsAppResponse getMessages(int $page = 1, int $perPage = 20, ?string $status = null)
  * @method static WhatsAppResponse getMessage(string $id)
  * @method static WhatsAppResponse getAppInfo()

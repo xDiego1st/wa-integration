@@ -105,6 +105,8 @@ class WhatsAppServiceProvider extends ServiceProvider
             Route::post('/disconnect', [WhatsAppDashboardController::class, 'disconnect'])->name('waku.disconnect');
             Route::post('/send', [WhatsAppDashboardController::class, 'testSend'])->name('waku.send');
             Route::post('/sessions', [WhatsAppDashboardController::class, 'createSession'])->name('waku.create-session');
+            Route::post('/sessions/{id}/delete', [WhatsAppDashboardController::class, 'deleteSession'])->name('waku.delete-session');
+            Route::delete('/sessions/{id}', [WhatsAppDashboardController::class, 'deleteSession']);
         });
     }
 }

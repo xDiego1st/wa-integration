@@ -7,7 +7,7 @@
 
 Paket Laravel resmi untuk menghubungkan aplikasi Anda (Blade, Livewire, Inertia, Filament) ke **PlatformCore WhatsApp Integration Gateway**. 
 
-Begitu di-install, aplikasi Anda **langsung mendapatkan halaman manajemen WhatsApp lengkap (`/whatsapp`)** untuk scan QR Multi-Device, uji kirim pesan, serta petunjuk teknis integrasi API interaktif.
+Begitu di-install, aplikasi Anda **langsung mendapatkan halaman manajemen WhatsApp lengkap (`/waku/dashboard`)** untuk scan QR Multi-Device, uji kirim pesan, serta petunjuk teknis integrasi API interaktif.
 
 ---
 

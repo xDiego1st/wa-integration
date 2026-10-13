@@ -28,9 +28,24 @@ class WhatsAppClient
             return new WhatsAppResponse([], 401, 'WhatsApp credentials missing: WHATSAPP_APP_ID and WHATSAPP_API_KEY must be configured.');
         }
 
+        $clientUrl = function_exists('config') ? config('app.url') : null;
+        if (empty($clientUrl) && function_exists('request')) {
+            try {
+                $clientUrl = request()->getSchemeAndHttpHost();
+            } catch (\Throwable $e) {}
+        }
+        if (empty($clientUrl) && function_exists('url')) {
+            try {
+                $clientUrl = url('/');
+            } catch (\Throwable $e) {}
+        }
+        $clientName = function_exists('config') ? config('app.name') : 'Laravel Application';
+
         $defaultHeaders = [
             'X-App-Id' => $this->appId,
             'X-App-Key' => $this->apiKey,
+            'X-Client-App-Url' => (string)($clientUrl ?: 'http://localhost'),
+            'X-Client-App-Name' => (string)$clientName,
             'Accept' => 'application/json',
         ];
 
@@ -131,6 +146,11 @@ class WhatsAppClient
             return new WhatsAppResponse([], 404, 'No session specified or found');
         }
         return $this->request('post', "app/whatsapp/sessions/{$sid}/disconnect");
+    }
+
+    public function deleteSession(string $sessionId): WhatsAppResponse
+    {
+        return $this->request('delete', "app/whatsapp/sessions/{$sessionId}");
     }
 
     public function getMessages(int $page = 1, int $perPage = 20, ?string $status = null): WhatsAppResponse

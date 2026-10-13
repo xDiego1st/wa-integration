@@ -4,8 +4,8 @@ namespace WaIntegration\Laravel\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use WaIntegration\Laravel\Facades\WhatsApp;
 
 class WhatsAppDashboardController extends Controller
@@ -68,7 +68,7 @@ class WhatsAppDashboardController extends Controller
                         ], 403);
                     }
 
-                    $redirectUrl = config('waku.dashboard.redirect_unauthorized') 
+                    $redirectUrl = config('waku.dashboard.redirect_unauthorized')
                         ?? config('whatsapp.dashboard.redirect_unauthorized', '/');
 
                     return redirect()->to($redirectUrl)->with('error', 'Anda tidak memiliki izin untuk mengakses halaman Waku Dashboard.');
@@ -90,7 +90,8 @@ class WhatsAppDashboardController extends Controller
                 if ($user->hasAnyRole($allowedRoles)) {
                     return true;
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
         }
 
         // hasRole check with case insensitivity
@@ -100,14 +101,15 @@ class WhatsAppDashboardController extends Controller
                     if ($user->hasRole($role)) {
                         return true;
                     }
-                } catch (\Throwable $e) {}
+                } catch (\Throwable $e) {
+                }
             }
         }
 
         // Direct 'role' string attribute on User model
         if (!empty($user->role)) {
             foreach ($allowedRoles as $role) {
-                if (strcasecmp((string)$user->role, (string)$role) === 0) {
+                if (strcasecmp((string) $user->role, (string) $role) === 0) {
                     return true;
                 }
             }
@@ -117,17 +119,18 @@ class WhatsAppDashboardController extends Controller
         if (isset($user->roles)) {
             try {
                 $userRoles = collect($user->roles)->map(function ($r) {
-                    return is_object($r) ? ($r->name ?? $r->slug ?? (string)$r) : (string)$r;
+                    return is_object($r) ? ($r->name ?? $r->slug ?? (string) $r) : (string) $r;
                 })->all();
 
                 foreach ($userRoles as $ur) {
                     foreach ($allowedRoles as $ar) {
-                        if (strcasecmp((string)$ur, (string)$ar) === 0) {
+                        if (strcasecmp((string) $ur, (string) $ar) === 0) {
                             return true;
                         }
                     }
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
         }
 
         return false;
@@ -311,6 +314,25 @@ class WhatsAppDashboardController extends Controller
         ]);
 
         $res = WhatsApp::createSession($request->input('name'));
+
+        return response()->json([
+            'success' => $res->isSuccessful(),
+            'data' => $res->data(),
+            'error' => $res->error(),
+        ], $res->isSuccessful() ? 200 : 400);
+    }
+
+    /**
+     * Delete an existing WhatsApp session.
+     */
+    public function deleteSession(Request $request, string $id)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) {
+            return $authCheck;
+        }
+
+        $res = WhatsApp::deleteSession($id);
 
         return response()->json([
             'success' => $res->isSuccessful(),
