@@ -1,8 +1,8 @@
 # WhatsApp Gateway Package for Laravel
-## `wa-integration/laravel`
+## `xdiego1st/wa-integration`
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/wa-integration/laravel.svg?style=flat-square)](https://packagist.org/packages/wa-integration/laravel)
-[![Total Downloads](https://img.shields.io/packagist/dt/wa-integration/laravel.svg?style=flat-square)](https://packagist.org/packages/wa-integration/laravel)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/xdiego1st/wa-integration.svg?style=flat-square)](https://packagist.org/packages/xdiego1st/wa-integration)
+[![Total Downloads](https://img.shields.io/packagist/dt/xdiego1st/wa-integration.svg?style=flat-square)](https://packagist.org/packages/xdiego1st/wa-integration)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
 Paket Laravel resmi untuk menghubungkan aplikasi Anda (Blade, Livewire, Inertia, Filament) ke **PlatformCore WhatsApp Integration Gateway**. 
@@ -28,7 +28,7 @@ Begitu di-install, aplikasi Anda **langsung mendapatkan halaman manajemen WhatsA
 Jalankan perintah Composer di root proyek Laravel Anda:
 
 ```bash
-composer require wa-integration/laravel
+composer require xdiego1st/wa-integration
 ```
 
 Publikasikan file konfigurasi:
@@ -140,19 +140,12 @@ php artisan wa:test-send 08123456789 "Tes pesan dari terminal Laravel"
 
 Agar package ini dapat di-install oleh publik atau tim Anda melalui `composer require`, ikuti 4 langkah mudah berikut:
 
-### Langkah 1: Buat Repository GitHub Publik
-1. Masuk ke GitHub dan buat repository baru, misalnya:
-   `https://github.com/username-anda/wa-integration-laravel`
-2. Push isi folder `packages/laravel-wa-integration` ke repository tersebut:
-   ```bash
-   cd packages/laravel-wa-integration
-   git init
-   git add .
-   git commit -m "feat: initial release of WhatsApp Laravel Gateway package"
-   git branch -M main
-   git remote add origin https://github.com/username-anda/wa-integration-laravel.git
-   git push -u origin main
-   ```
+### Langkah 1: Push ke Repository GitHub Anda
+Repository GitHub: `https://github.com/xDiego1st/wa-integration.git`
+```bash
+git remote set-url origin https://github.com/xDiego1st/wa-integration.git
+git push -u origin main --force
+```
 
 ### Langkah 2: Buat Tag Versi Release
 Buat tag rilis awal di repository GitHub Anda:
@@ -162,21 +155,21 @@ git push origin v1.0.0
 ```
 
 ### Langkah 3: Submit ke Packagist.org
-1. Buka [Packagist.org](https://packagist.org) dan login menggunakan akun GitHub Anda.
+1. Buka [Packagist.org](https://packagist.org) dan login menggunakan akun GitHub Anda (`xDiego1st`).
 2. Klik tombol **Submit** di menu atas.
 3. Masukkan URL repository GitHub Anda:
-   `https://github.com/username-anda/wa-integration-laravel`
-4. Klik **Check**, lalu klik **Submit**. Package Anda kini terdaftar di Packagist!
+   `https://github.com/xDiego1st/wa-integration`
+4. Klik **Check**, lalu klik **Submit**. Package Anda kini resmi terdaftar di Packagist!
 
 ### Langkah 4: Otomatisasi Update (GitHub Webhook)
 Agar Packagist otomatis memperbarui package setiap kali Anda melakukan push tag baru:
 1. Di halaman package Packagist Anda, buka petunjuk **GitHub Service Hook / Webhook**.
 2. Masuk ke GitHub Repo &rarr; **Settings** &rarr; **Webhooks** &rarr; **Add Webhook**.
-3. Masukkan Payload URL dari Packagist: `https://packagist.org/api/github?username=USERNAME_ANDA`.
+3. Masukkan Payload URL dari Packagist: `https://packagist.org/api/github?username=xDiego1st`.
 
 Sekarang seluruh proyek Laravel di mana pun dapat meng-install package Anda cukup dengan:
 ```bash
-composer require wa-integration/laravel
+composer require xdiego1st/wa-integration
 ```
 
 ---

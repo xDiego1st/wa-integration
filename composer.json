@@ -1,5 +1,5 @@
 {
-  "name": "wa-integration/laravel",
+  "name": "xdiego1st/wa-integration",
   "description": "Enterprise WhatsApp Gateway Client, Live Management Dashboard, and Multi-Tenant Integration for Laravel",
   "keywords": [
     "whatsapp",
@@ -14,6 +14,10 @@
   "type": "library",
   "license": "MIT",
   "authors": [
+    {
+      "name": "Rasyid Abdul Halim",
+      "email": "idiego1st@gmail.com"
+    },
     {
       "name": "PlatformCore Team",
       "email": "dev@platformcore.dev"
