@@ -132,11 +132,63 @@ php artisan wa:status
 
 # Uji coba kirim pesan
 php artisan wa:test-send 08123456789 "Tes pesan dari terminal Laravel"
+
+# Pencopotan paket bersih (Clean Uninstall)
+php artisan wa:uninstall --force
 ```
 
 ---
 
-## 5. Cara Mendaftarkan Package Ini ke Packagist.org
+## 5. Cara Upgrade / Pembaruan Versi
+
+Untuk memperbarui pustaka ke versi stabil terbaru tanpa downtime:
+
+```bash
+# 1. Update paket via Composer
+composer update xdiego1st/wa-integration
+
+# 2. Sinkronkan tampilan dashboard terbaru (jika view dipublikasikan)
+php artisan vendor:publish --tag=whatsapp-views --force
+
+# 3. Bersihkan seluruh cache aplikasi Laravel
+php artisan optimize:clear
+```
+
+---
+
+## 6. Panduan Uninstall Bersih (Zero-Residue Clean Uninstall)
+
+Jika Anda perlu mencopot paket ini dari aplikasi Laravel, ikuti panduan berikut agar seluruh berkas konfigurasi, view vendor, cache, dan variabel lingkungan dibersihkan secara total tanpa meninggalkan file sampah.
+
+### Metode A: Otomatis via Artisan Command (Direkomendasikan)
+```bash
+# 1. Bersihkan seluruh konfigurasi, views, dan variabel lingkungan
+php artisan wa:uninstall --force
+
+# 2. Copot pustaka dari Composer
+composer remove xdiego1st/wa-integration
+```
+
+*Perintah `php artisan wa:uninstall` akan menghapus `config/whatsapp.php`, menghapus direktori `resources/views/vendor/whatsapp`, membersihkan baris `WHATSAPP_*` di `.env`, dan mengosongkan cache Laravel.*
+
+### Metode B: Manual Step-by-Step
+```bash
+# 1. Hapus konfigurasi
+rm config/whatsapp.php
+
+# 2. Hapus views terpublikasi (jika ada)
+rm -rf resources/views/vendor/whatsapp
+
+# 3. Bersihkan cache Laravel
+php artisan optimize:clear
+
+# 4. Hapus paket dari composer
+composer remove xdiego1st/wa-integration
+```
+
+---
+
+## 7. Cara Mendaftarkan Package Ini ke Packagist.org
 
 Agar package ini dapat di-install oleh publik atau tim Anda melalui `composer require`, ikuti 4 langkah mudah berikut:
 

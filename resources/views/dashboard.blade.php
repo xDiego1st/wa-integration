@@ -440,6 +440,47 @@ Event::listen('whatsapp.message.delivered', function ($data) {
                         <button type="button" onclick="copySnippet('code-curl')" class="absolute top-3 right-3 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono transition-colors">Salin</button>
                     </div>
                 </div>
+
+                <!-- 6. Upgrade & Update Guide -->
+                <div class="space-y-3 pt-4 border-t border-slate-100">
+                    <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-800 flex items-center justify-center text-xs font-bold">6</span>
+                        Cara Upgrade & Pembaruan Paket
+                    </h3>
+                    <p class="text-xs text-slate-600">Perbarui pustaka ke versi stabil terbaru dan sinkronkan aset dashboard:</p>
+                    <div class="relative group">
+                        <pre class="bg-slate-900 text-slate-100 font-mono text-xs p-4 rounded-xl overflow-x-auto"><code id="code-upgrade"># 1. Update package via Composer
+composer update xdiego1st/wa-integration
+
+# 2. Sinkronkan pembaruan tampilan dashboard bawaan (jika view dipublikasikan)
+php artisan vendor:publish --tag=whatsapp-views --force
+
+# 3. Bersihkan seluruh cache konfigurasi Laravel
+php artisan optimize:clear</code></pre>
+                        <button type="button" onclick="copySnippet('code-upgrade')" class="absolute top-3 right-3 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono transition-colors">Salin</button>
+                    </div>
+                </div>
+
+                <!-- 7. Clean Zero-Residue Uninstall Guide -->
+                <div class="space-y-3 pt-4 border-t border-slate-100">
+                    <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-rose-100 text-rose-800 flex items-center justify-center text-xs font-bold">7</span>
+                        Panduan Uninstall Bersih (Clean Uninstall)
+                    </h3>
+                    <p class="text-xs text-slate-600">Jika perlu mencopot paket, gunakan perintah uninstaller resmi untuk membersihkan seluruh berkas konfigurasi, view vendor, dan variabel .env tanpa meninggalkan file sampah:</p>
+                    <div class="relative group">
+                        <pre class="bg-slate-900 text-slate-100 font-mono text-xs p-4 rounded-xl overflow-x-auto"><code id="code-uninstall"># Opsi A (Otomatis via Artisan Uninstaller - Direkomendasikan):
+php artisan wa:uninstall --force
+composer remove xdiego1st/wa-integration
+
+# Opsi B (Manual Step-by-Step):
+rm config/whatsapp.php
+rm -rf resources/views/vendor/whatsapp
+php artisan optimize:clear
+composer remove xdiego1st/wa-integration</code></pre>
+                        <button type="button" onclick="copySnippet('code-uninstall')" class="absolute top-3 right-3 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono transition-colors">Salin</button>
+                    </div>
+                </div>
             </div>
         </div>
     </main>

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use WaIntegration\Laravel\Services\WhatsAppClient;
 use WaIntegration\Laravel\Console\Commands\WhatsAppStatusCommand;
 use WaIntegration\Laravel\Console\Commands\WhatsAppTestSendCommand;
+use WaIntegration\Laravel\Console\Commands\WhatsAppUninstallCommand;
 use WaIntegration\Laravel\Http\Controllers\WhatsAppWebhookController;
 use WaIntegration\Laravel\Http\Controllers\WhatsAppDashboardController;
 use WaIntegration\Laravel\Http\Livewire\WhatsAppConnectionCard;
@@ -42,6 +43,7 @@ class WhatsAppServiceProvider extends ServiceProvider
             $this->commands([
                 WhatsAppStatusCommand::class,
                 WhatsAppTestSendCommand::class,
+                WhatsAppUninstallCommand::class,
             ]);
         }
 
