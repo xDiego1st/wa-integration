@@ -67,10 +67,11 @@ class WhatsAppDashboardController extends Controller
                             'error' => 'Akses ditolak: Anda tidak memiliki peran/izin untuk membuka Waku Dashboard.'
                         ], 403);
                     }
-                    return response()->view('whatsapp::unauthorized', [
-                        'user' => $user,
-                        'allowedRoles' => $allowedRoles,
-                    ], 403);
+
+                    $redirectUrl = config('waku.dashboard.redirect_unauthorized') 
+                        ?? config('whatsapp.dashboard.redirect_unauthorized', '/');
+
+                    return redirect()->to($redirectUrl)->with('error', 'Anda tidak memiliki izin untuk mengakses halaman Waku Dashboard.');
                 }
             }
         }

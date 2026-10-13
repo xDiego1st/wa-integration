@@ -84,6 +84,9 @@ return [
 
         // Custom Laravel Gate (opsional)
         'gate' => null,
+
+        // Tujuan pengalihan URL jika pengguna tidak memiliki hak akses role/email
+        'redirect_unauthorized' => env('WAKU_REDIRECT_UNAUTHORIZED', '/'),
     ],
 
     /*
