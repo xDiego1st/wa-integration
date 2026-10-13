@@ -47,10 +47,10 @@
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h1 class="text-lg font-bold text-slate-900 tracking-tight">WhatsApp Gateway Manager</h1>
-                            <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Laravel Package</span>
+                            <h1 class="text-lg font-bold text-slate-900 tracking-tight">Waku Dashboard</h1>
+                            <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">xdiego1st/wa-integration v1.0.2</span>
                         </div>
-                        <p class="text-xs text-slate-500">Koneksi multi-device, uji kirim pesan & dokumentasi teknis API</p>
+                        <p class="text-xs text-slate-500">Platform Pengelolaan WhatsApp Mandiri & Integrasi Multi-Tenant (/waku/dashboard)</p>
                     </div>
                 </div>
 
@@ -90,6 +90,10 @@
                 <button type="button" onclick="switchTab('tab-docs')" id="btn-tab-docs" class="tab-btn px-4 py-3 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 transition-all">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
                     Petunjuk Teknis API & SDK
+                </button>
+                <button type="button" onclick="switchTab('tab-lifecycle')" id="btn-tab-lifecycle" class="tab-btn px-4 py-3 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 transition-all">
+                    <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    Panduan Lifecycle & Uninstall
                 </button>
             </div>
         </div>
@@ -483,6 +487,115 @@ composer remove xdiego1st/wa-integration</code></pre>
                 </div>
             </div>
         </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 5: PANDUAN SIKLUS HIDUP LENGKAP        -->
+        <!-- ========================================== -->
+        <div id="tab-lifecycle" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-8">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-900">Panduan Siklus Hidup Paket (Package Lifecycle)</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Panduan instalasi, konfigurasi rute unik, pembaruan versi (upgrade), dan pencopotan paket 100% bersih tanpa residu.</p>
+                </div>
+
+                <!-- 1. Unique Routes -->
+                <div class="space-y-3">
+                    <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-xs font-bold">1</span>
+                        Isolasi Rute Unik (Mencegah Benturan dengan Rute Host)
+                    </h3>
+                    <p class="text-xs text-slate-600">Paket ini secara bawaan menggunakan prefix terisolasi agar tidak bertabrakan dengan controller atau modul internal aplikasi Anda:</p>
+                    <div class="rounded-xl border border-slate-200 overflow-hidden text-xs">
+                        <table class="w-full text-left font-mono">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 text-[11px]">
+                                <tr>
+                                    <th class="py-2.5 px-4">Fungsi Rute</th>
+                                    <th class="py-2.5 px-4">Default URL</th>
+                                    <th class="py-2.5 px-4">Route Name</th>
+                                    <th class="py-2.5 px-4 font-sans">Variabel .env Override</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-[11px]">
+                                <tr>
+                                    <td class="py-2.5 px-4 font-bold text-emerald-700">Web Dashboard</td>
+                                    <td class="py-2.5 px-4 text-slate-800">/waku/dashboard</td>
+                                    <td class="py-2.5 px-4 text-indigo-600">waku.dashboard</td>
+                                    <td class="py-2.5 px-4 font-sans text-slate-600"><code>WHATSAPP_DASHBOARD_PREFIX</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-4 font-bold text-emerald-700">Inbound Webhook</td>
+                                    <td class="py-2.5 px-4 text-slate-800">/waku/api/webhook</td>
+                                    <td class="py-2.5 px-4 text-indigo-600">waku.webhook</td>
+                                    <td class="py-2.5 px-4 font-sans text-slate-600"><code>WHATSAPP_WEBHOOK_PREFIX</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 2. Installation Options -->
+                <div class="space-y-3 pt-4 border-t border-slate-100">
+                    <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-xs font-bold">2</span>
+                        Pilihan Pemasangan via Composer
+                    </h3>
+                    <p class="text-xs text-slate-600">Gunakan Packagist untuk lingkungan produksi atau Local Path jika pengembangan internal:</p>
+                    <div class="relative group">
+                        <pre class="bg-slate-900 text-slate-100 font-mono text-xs p-4 rounded-xl overflow-x-auto"><code id="code-lc-install"># Opsi A: Packagist Resmi (Publik)
+composer require xdiego1st/wa-integration
+
+# Opsi B: Monorepo / Local Path (pada composer.json aplikasi Anda)
+# "repositories": [{"type": "path", "url": "../packages/laravel-wa-integration", "options": {"symlink": true}}]
+composer require xdiego1st/wa-integration:@dev
+
+# Publikasikan konfigurasi
+php artisan vendor:publish --tag=whatsapp-config</code></pre>
+                        <button type="button" onclick="copySnippet('code-lc-install')" class="absolute top-3 right-3 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono transition-colors">Salin</button>
+                    </div>
+                </div>
+
+                <!-- 3. Upgrade Guide -->
+                <div class="space-y-3 pt-4 border-t border-slate-100">
+                    <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-800 flex items-center justify-center text-xs font-bold">3</span>
+                        Cara Upgrade & Sinkronisasi Versi Baru
+                    </h3>
+                    <p class="text-xs text-slate-600">Perbarui pustaka secara berkala dan perbarui template tampilan tanpa menimpa variabel .env Anda:</p>
+                    <div class="relative group">
+                        <pre class="bg-slate-900 text-slate-100 font-mono text-xs p-4 rounded-xl overflow-x-auto"><code id="code-lc-upgrade"># 1. Update paket via Composer
+composer update xdiego1st/wa-integration
+
+# 2. Sinkronkan pembaruan view dashboard (opsional jika view pernah dipublikasi)
+php artisan vendor:publish --tag=whatsapp-views --force
+
+# 3. Bersihkan seluruh cache aplikasi host
+php artisan optimize:clear</code></pre>
+                        <button type="button" onclick="copySnippet('code-lc-upgrade')" class="absolute top-3 right-3 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono transition-colors">Salin</button>
+                    </div>
+                </div>
+
+                <!-- 4. Clean Uninstall -->
+                <div class="space-y-3 pt-4 border-t border-slate-100">
+                    <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-rose-100 text-rose-800 flex items-center justify-center text-xs font-bold">4</span>
+                        Panduan Uninstall Bersih (Zero-Residue Clean Uninstall)
+                    </h3>
+                    <p class="text-xs text-slate-600">Paket menyediakan perintah uninstaller otomatis satu langkah untuk membersihkan seluruh berkas konfigurasi, view vendor, cache, dan variabel .env:</p>
+                    <div class="relative group">
+                        <pre class="bg-slate-900 text-slate-100 font-mono text-xs p-4 rounded-xl overflow-x-auto"><code id="code-lc-uninstall"># 1. Jalankan pembersih otomatis seluruh berkas konfigurasi, view & .env
+php artisan wa:uninstall --force
+
+# 2. Hapus pustaka dependensi dari vendor Composer
+composer remove xdiego1st/wa-integration</code></pre>
+                        <button type="button" onclick="copySnippet('code-lc-uninstall')" class="absolute top-3 right-3 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono transition-colors">Salin</button>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-1">
+                        <div class="font-bold text-slate-800">Catatan Jaminan Zero-Residue:</div>
+                        <p>Perintah <code>php artisan wa:uninstall</code> memastikan tidak ada file konfigurasi tertinggal di <code>config/whatsapp.php</code> atau direktori <code>resources/views/vendor/whatsapp</code>, sehingga aplikasi host Anda tetap 100% bersih seperti semula.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -518,7 +631,7 @@ composer remove xdiego1st/wa-integration</code></pre>
 
         async function refreshQrStatus() {
             try {
-                const res = await fetch("{{ route('whatsapp.qr') }}");
+                const res = await fetch("{{ route('waku.qr') }}");
                 const json = await res.json();
                 renderConnectionStatus(json);
             } catch (err) {
@@ -591,7 +704,7 @@ composer remove xdiego1st/wa-integration</code></pre>
 
         async function connectSession() {
             try {
-                const res = await fetch("{{ route('whatsapp.connect') }}", {
+                const res = await fetch("{{ route('waku.connect') }}", {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
                 });
@@ -604,7 +717,7 @@ composer remove xdiego1st/wa-integration</code></pre>
         async function disconnectSession() {
             if (!confirm("Apakah Anda yakin ingin memutuskan sesi WhatsApp ini?")) return;
             try {
-                await fetch("{{ route('whatsapp.disconnect') }}", {
+                await fetch("{{ route('waku.disconnect') }}", {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
                 });
@@ -640,7 +753,7 @@ composer remove xdiego1st/wa-integration</code></pre>
             };
 
             try {
-                const res = await fetch("{{ route('whatsapp.send') }}", {
+                const res = await fetch("{{ route('waku.send') }}", {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
                     body: JSON.stringify(payload)

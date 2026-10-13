@@ -13,13 +13,13 @@ Begitu di-install, aplikasi Anda **langsung mendapatkan halaman manajemen WhatsA
 
 ## Fitur Utama
 
-- **Halaman Manajemen Bawaan (`/whatsapp`)**: Dashboard visual instan untuk scan QR Code live (polling real-time), cek status koneksi, dan uji kirim pesan tanpa perlu menulis kode UI.
+- **Halaman Manajemen Bawaan (`/waku/dashboard`)**: Dashboard visual instan untuk scan QR Code live (polling real-time), cek status koneksi, dan uji kirim pesan tanpa perlu menulis kode UI. Rute terisolasi bebas benturan dengan rute host.
 - **Expressive Facade**: Kirim pesan dalam 1 baris kode: `WhatsApp::send('08123456789', 'Halo!');`.
 - **Dukungan Media Lengkap**: Kirim file faktur PDF (`sendDocument`), foto bukti pembayaran (`sendImage`), dan media lainnya.
 - **Isolasi Multi-Tenant**: Setiap aplikasi konsumen memiliki kredensial API Key dan sesi Baileys terisolasi.
-- **Webhook HMAC-SHA256**: Menerima pesan masuk dan tanda terima status delivery secara otomatis dengan verifikasi keamanan tanda tangan.
-- **Artisan CLI**: Monitor status dan uji kirim pesan langsung dari terminal (`php artisan wa:status`, `php artisan wa:test-send`).
-- **Kompatibilitas**: Laravel 10, 11, dan 12 (PHP 8.1 - 8.4).
+- **Webhook HMAC-SHA256**: Menerima pesan masuk dan tanda terima status delivery secara otomatis di `/waku/api/webhook`.
+- **Artisan CLI**: Monitor status, uji kirim pesan, dan uninstaller bersih (`php artisan wa:status`, `php artisan wa:test-send`, `php artisan wa:uninstall`).
+- **Kompatibilitas Penuh**: Laravel 10, 11, 12, dan 13 (PHP 8.1 - 8.5).
 
 ---
 
@@ -53,20 +53,21 @@ WHATSAPP_APP_ID=wai_app_your_application_id
 WHATSAPP_API_KEY=wai_live_your_secret_api_key
 WHATSAPP_WEBHOOK_SECRET=wai_sec_your_webhook_secret
 
-# Opsional: Pengaturan Dashboard Bawaan
+# Pengaturan Rute Unik (Mencegah Benturan dengan Rute Aplikasi Host)
 WHATSAPP_DASHBOARD_ENABLED=true
-WHATSAPP_DASHBOARD_PREFIX=whatsapp
+WHATSAPP_DASHBOARD_PREFIX=waku/dashboard
+WHATSAPP_WEBHOOK_PREFIX=waku/api/webhook
 ```
 
 > **Tips:** Kredensial `WHATSAPP_APP_ID` dan `WHATSAPP_API_KEY` diperoleh dari menu **Multi-Application Hub** pada Gateway PlatformCore.
 
 ---
 
-## 3. Halaman Manajemen WhatsApp Langsung (`/whatsapp`)
+## 3. Halaman Manajemen WhatsApp Langsung (`/waku/dashboard`)
 
 Setelah konfigurasi di atas selesai, buka browser Anda dan akses:
 
-👉 **`http://aplikasi-anda.test/whatsapp`**
+👉 **`http://aplikasi-anda.test/waku/dashboard`**
 
 Anda akan langsung melihat:
 1. **Status Koneksi & Live QR Code Scanner**: Scan QR code langsung dari ponsel untuk menghubungkan nomor WhatsApp.

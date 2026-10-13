@@ -26,7 +26,8 @@ class WhatsAppDashboardController extends Controller
             'appId' => config('whatsapp.app_id'),
             'hasApiKey' => !empty(config('whatsapp.api_key')),
             'hasWebhookSecret' => !empty(config('whatsapp.webhook_secret')),
-            'webhookUrl' => url('/api/whatsapp/webhook'),
+            'webhookUrl' => url(config('whatsapp.webhook.prefix', 'waku/api/webhook')),
+            'dashboardUrl' => url(config('whatsapp.dashboard.prefix', 'waku/dashboard')),
         ];
 
         return view('whatsapp::dashboard', compact('appInfo', 'sessions', 'messages', 'config'));

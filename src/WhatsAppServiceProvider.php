@@ -55,12 +55,15 @@ class WhatsAppServiceProvider extends ServiceProvider
             \Livewire\Livewire::component('whatsapp-connection-card', WhatsAppConnectionCard::class);
         }
 
-        // 4. Register Webhook Route
-        Route::post('/api/whatsapp/webhook', [WhatsAppWebhookController::class, 'handle'])
-            ->name('whatsapp.webhook')
-            ->middleware('api');
+        // 4. Register Inbound Webhook Route (Default: /waku/api/webhook)
+        $webhookPrefix = config('whatsapp.webhook.prefix', 'waku/api/webhook');
+        $webhookMiddleware = config('whatsapp.webhook.middleware', ['api']);
 
-        // 5. Register Management Dashboard Routes
+        Route::post($webhookPrefix, [WhatsAppWebhookController::class, 'handle'])
+            ->name('waku.webhook')
+            ->middleware($webhookMiddleware);
+
+        // 5. Register Management Dashboard Routes (Default: /waku/dashboard)
         $this->registerDashboardRoutes();
     }
 
@@ -70,19 +73,19 @@ class WhatsAppServiceProvider extends ServiceProvider
             return;
         }
 
-        $prefix = config('whatsapp.dashboard.prefix', 'whatsapp');
+        $prefix = config('whatsapp.dashboard.prefix', 'waku/dashboard');
         $middleware = config('whatsapp.dashboard.middleware', ['web']);
 
         Route::group([
             'prefix' => $prefix,
             'middleware' => $middleware,
         ], function () {
-            Route::get('/', [WhatsAppDashboardController::class, 'index'])->name('whatsapp.dashboard');
-            Route::get('/qr', [WhatsAppDashboardController::class, 'qr'])->name('whatsapp.qr');
-            Route::post('/connect', [WhatsAppDashboardController::class, 'connect'])->name('whatsapp.connect');
-            Route::post('/disconnect', [WhatsAppDashboardController::class, 'disconnect'])->name('whatsapp.disconnect');
-            Route::post('/send', [WhatsAppDashboardController::class, 'testSend'])->name('whatsapp.send');
-            Route::post('/sessions', [WhatsAppDashboardController::class, 'createSession'])->name('whatsapp.create-session');
+            Route::get('/', [WhatsAppDashboardController::class, 'index'])->name('waku.dashboard');
+            Route::get('/qr', [WhatsAppDashboardController::class, 'qr'])->name('waku.qr');
+            Route::post('/connect', [WhatsAppDashboardController::class, 'connect'])->name('waku.connect');
+            Route::post('/disconnect', [WhatsAppDashboardController::class, 'disconnect'])->name('waku.disconnect');
+            Route::post('/send', [WhatsAppDashboardController::class, 'testSend'])->name('waku.send');
+            Route::post('/sessions', [WhatsAppDashboardController::class, 'createSession'])->name('waku.create-session');
         });
     }
 }

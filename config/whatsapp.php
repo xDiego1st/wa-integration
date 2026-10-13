@@ -44,17 +44,28 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | WhatsApp Management Dashboard
+    | WhatsApp Management Dashboard (Waku Dashboard)
     |--------------------------------------------------------------------------
     | When enabled, users can visit the management dashboard directly in their
     | browser to connect via QR Code, test sending messages, and view API guides.
     |
-    | Default URL: /whatsapp
+    | Default URL: /waku/dashboard (isolated unique route to prevent collision)
     | Middleware: ['web'] (You may add 'auth' to protect it)
     */
     'dashboard' => [
         'enabled' => env('WHATSAPP_DASHBOARD_ENABLED', true),
-        'prefix' => env('WHATSAPP_DASHBOARD_PREFIX', 'whatsapp'),
+        'prefix' => env('WHATSAPP_DASHBOARD_PREFIX', 'waku/dashboard'),
         'middleware' => ['web'],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Inbound Webhook Route Configuration
+    |--------------------------------------------------------------------------
+    | Default URL: /waku/api/webhook (isolated unique route to prevent collision)
+    */
+    'webhook' => [
+        'prefix' => env('WHATSAPP_WEBHOOK_PREFIX', 'waku/api/webhook'),
+        'middleware' => ['api'],
     ],
 ];
