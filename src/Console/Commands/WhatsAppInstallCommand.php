@@ -69,8 +69,14 @@ class WhatsAppInstallCommand extends Command
         $dashboardPrefix = config('whatsapp.dashboard.prefix', 'waku/dashboard');
         $webhookPrefix = config('whatsapp.webhook.prefix', 'waku/api/webhook');
 
-        $dashboardUrl = url($dashboardPrefix);
-        $webhookUrl = url($webhookPrefix);
+        $appUrl = config('app.url', 'http://localhost');
+        if (!preg_match('/^https?:\/\//i', $appUrl)) {
+            $appUrl = 'http://' . ltrim($appUrl, '/');
+        }
+        $appUrl = rtrim($appUrl, '/');
+
+        $dashboardUrl = $appUrl . '/' . ltrim($dashboardPrefix, '/');
+        $webhookUrl = $appUrl . '/' . ltrim($webhookPrefix, '/');
 
         $this->newLine();
         $this->info('----------------------------------------------------------------------');
