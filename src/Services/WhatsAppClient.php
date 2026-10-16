@@ -18,7 +18,7 @@ class WhatsAppClient
         $this->baseUrl = rtrim($config['base_url'] ?? 'http://localhost:3001/api/v1', '/');
         $this->appId = $config['app_id'] ?? null;
         $this->apiKey = $config['api_key'] ?? null;
-        $this->timeout = (int)($config['timeout'] ?? 15);
+        $this->timeout = (int) ($config['timeout'] ?? 15);
         $this->defaultSessionId = $config['default_session_id'] ?? null;
     }
 
@@ -32,20 +32,22 @@ class WhatsAppClient
         if (empty($clientUrl) && function_exists('request')) {
             try {
                 $clientUrl = request()->getSchemeAndHttpHost();
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
         }
         if (empty($clientUrl) && function_exists('url')) {
             try {
                 $clientUrl = url('/');
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
         }
         $clientName = function_exists('config') ? config('app.name') : 'Laravel Application';
 
         $defaultHeaders = [
             'X-App-Id' => $this->appId,
             'X-App-Key' => $this->apiKey,
-            'X-Client-App-Url' => (string)($clientUrl ?: 'http://localhost'),
-            'X-Client-App-Name' => (string)$clientName,
+            'X-Client-App-Url' => (string) ($clientUrl ?: 'http://localhost'),
+            'X-Client-App-Name' => (string) $clientName,
             'Accept' => 'application/json',
         ];
 
@@ -170,6 +172,111 @@ class WhatsAppClient
     public function getAppInfo(): WhatsAppResponse
     {
         return $this->request('get', 'app/info');
+    }
+
+    // ── AI Customer Service & Bot Configuration ──────────────────────────
+
+    public function getBotConfig(?string $sessionId = null): WhatsAppResponse
+    {
+        $sid = $sessionId ?? $this->resolveDefaultSessionId();
+        return $this->request('get', 'app/ai/config', ['sessionId' => $sid]);
+    }
+
+    public function updateBotConfig(array $data, ?string $sessionId = null): WhatsAppResponse
+    {
+        $payload = array_merge([
+            'sessionId' => $sessionId ?? $this->resolveDefaultSessionId(),
+        ], $data);
+        return $this->request('post', 'app/ai/config', $payload);
+    }
+
+    public function toggleBot(bool $enabled, ?string $sessionId = null): WhatsAppResponse
+    {
+        return $this->updateBotConfig([
+            'botMode' => $enabled ? 'HYBRID' : 'DISABLED',
+        ], $sessionId);
+    }
+
+    public function getPersonas(): WhatsAppResponse
+    {
+        return $this->request('get', 'app/ai/personas');
+    }
+
+    public function upsertPersona(array $data): WhatsAppResponse
+    {
+        return $this->request('post', 'app/ai/personas', $data);
+    }
+
+    // ── Live Conversation Inbox & Human Handover ─────────────────────────
+
+    public function getConversations(array $filters = []): WhatsAppResponse
+    {
+        return $this->request('get', 'app/conversations', $filters);
+    }
+
+    public function getConversation(string $conversationId): WhatsAppResponse
+    {
+        return $this->request('get', "app/conversations/{$conversationId}");
+    }
+
+    public function sendConversationReply(string $conversationId, string $content): WhatsAppResponse
+    {
+        return $this->request('post', "app/conversations/{$conversationId}/reply", [
+            'content' => $content,
+        ]);
+    }
+
+    public function takeoverConversation(string $conversationId): WhatsAppResponse
+    {
+        return $this->request('post', "app/conversations/{$conversationId}/takeover");
+    }
+
+    public function returnConversationToBot(string $conversationId): WhatsAppResponse
+    {
+        return $this->request('post', "app/conversations/{$conversationId}/return-to-bot");
+    }
+
+    public function resolveConversation(string $conversationId): WhatsAppResponse
+    {
+        return $this->request('post', "app/conversations/{$conversationId}/resolve");
+    }
+
+    public function addConversationNote(string $conversationId, string $content): WhatsAppResponse
+    {
+        return $this->request('post', "app/conversations/{$conversationId}/notes", [
+            'content' => $content,
+        ]);
+    }
+
+    // ── Knowledge Base Management ────────────────────────────────────────
+
+    public function getKnowledgeBases(): WhatsAppResponse
+    {
+        return $this->request('get', 'app/ai/knowledge');
+    }
+
+    public function createKnowledgeBase(string $name, ?string $description = null): WhatsAppResponse
+    {
+        return $this->request('post', 'app/ai/knowledge', [
+            'name' => $name,
+            'description' => $description,
+        ]);
+    }
+
+    public function addKnowledgeDocument(string $knowledgeBaseId, string $title, string $content, string $contentType = 'text/plain'): WhatsAppResponse
+    {
+        return $this->request('post', "app/ai/knowledge/{$knowledgeBaseId}/documents", [
+            'title' => $title,
+            'content' => $content,
+            'contentType' => $contentType,
+        ]);
+    }
+
+    // ── AI Analytics ─────────────────────────────────────────────────────
+
+    public function getAiUsageSummary(): WhatsAppResponse
+    {
+        return $this->request('get', 'app/ai/usage');
     }
 
     protected function resolveDefaultSessionId(bool $autoCreate = false): ?string

@@ -157,7 +157,70 @@ Event::listen('whatsapp.message.received', function ($data, $appId) {
 });
 ```
 
-### D. Perintah Terminal (Artisan)
+
+### D. Multi-Tenant AI Customer Service & Bot Automation (Baru di v1.2.0)
+
+Mulai versi `1.2.0`, WhatsApp Integration Gateway mendukung AI Customer Service, Chatbot Mode, Human Takeover, dan Grounding Knowledge Base langsung melalui Facade:
+
+```php
+use App\Facades\WhatsApp; // atau Diego1st\WhatsAppIntegration\Facades\WhatsApp
+
+// 1. Ambil atau Ubah Konfigurasi Bot Sesi
+$config = WhatsApp::getBotConfig($sessionId);
+
+// Aktifkan bot AI dalam mode HYBRID dengan Google Gemini / OpenAI
+WhatsApp::updateBotConfig($sessionId, [
+    'botEnabled' => true,
+    'mode' => 'HYBRID', // DISABLED | MENU_ONLY | AI_ONLY | HYBRID
+    'providerType' => 'GOOGLE_GEMINI',
+    'modelName' => 'gemini-1.5-flash',
+    'apiKey' => 'AIzaSyYourSecretKey', // Disimpan terenkripsi AES-256-GCM di backend
+    'handoverKeywords' => ['admin', 'human', 'cs', 'bantuan'],
+    'maxHistoryMessages' => 10,
+]);
+
+// Toggle status bot on/off
+WhatsApp::toggleBot($sessionId, true);
+
+// 2. Live Chat Inbox & Human Takeover (Handover)
+// Ambil daftar percakapan aktif
+$conversations = WhatsApp::getConversations(['status' => 'OPEN', 'mode' => 'BOT']);
+
+// Ambil detail percakapan beserta seluruh pesan dan catatan internal
+$detail = WhatsApp::getConversation($conversationId);
+
+// Balas percakapan pelanggan via WhatsApp (otomatis mengalihkan ke mode Admin)
+WhatsApp::sendConversationReply($conversationId, 'Halo, saya admin dari CS. Ada yang bisa dibantu?');
+
+// Ambil alih percakapan (Hentikan AI Bot seketika)
+WhatsApp::takeoverConversation($conversationId, 'Dihandle oleh CS tiket #1024');
+
+// Kembalikan kendali ke AI Bot
+WhatsApp::returnConversationToBot($conversationId);
+
+// Tandai percakapan selesai
+WhatsApp::resolveConversation($conversationId);
+
+// Tambah catatan internal admin (private note)
+WhatsApp::addConversationNote($conversationId, 'Pelanggan meminta klaim garansi produk A.');
+
+// 3. Knowledge Base & Grounding Dokumen
+// Buat koleksi dokumen baru
+$kb = WhatsApp::createKnowledgeBase('Katalog & FAQ 2026', 'Informasi resmi produk dan garansi');
+
+// Tambah dokumen dan otomatis di-chunking & diindeks untuk AI
+WhatsApp::addKnowledgeDocument($kb['data']['id'], [
+    'title' => 'Ketentuan Garansi',
+    'content' => 'Garansi berlaku selama 12 bulan sejak tanggal pembelian dengan menyertakan faktur...',
+    'source' => 'POLICY'
+]);
+
+// 4. Monitoring Penggunaan Token & Estimasi Biaya
+$usage = WhatsApp::getAiUsageSummary();
+// Mengembalikan total request, prompt/completion tokens, estimasi biaya USD & log eksekusi
+```
+
+### E. Perintah Terminal (Artisan)
 ```bash
 # Cek status koneksi sesi
 php artisan wa:status
