@@ -74,7 +74,7 @@
                     <div class="min-w-0">
                         <div class="flex items-center gap-2">
                             <span class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">Waku Dashboard</span>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">v1.1.0</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">v1.2.0</span>
                             <span class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-200">
                                 <span class="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></span> 24/7 Steady
                             </span>
@@ -643,7 +643,21 @@ WhatsApp::sendDocument(
     to: '08123456789',
     documentUrl: 'https://domain-anda.com/invoices/INV-001.pdf',
     caption: 'Berikut faktur transaksi pembayaran Anda.'
-);</code></pre>
+);
+
+// 3. AI Bot Customer Service & Live Chat Inbox (v1.2.0)
+WhatsApp::updateBotConfig($sessionId, [
+    'botEnabled' => true,
+    'mode' => 'HYBRID', // HYBRID | AI_ONLY | MENU_ONLY | DISABLED
+    'providerType' => 'GOOGLE_GEMINI', // GOOGLE_GEMINI | OPENAI
+    'modelName' => 'gemini-1.5-flash',
+    'handoverKeywords' => ['admin', 'human', 'cs', 'bantuan'],
+]);
+
+// Ambil alih percakapan (Human Takeover)
+WhatsApp::takeoverConversation($conversationId, 'Ditangani tim support');
+// Balas percakapan pelanggan dari backend
+WhatsApp::sendConversationReply($conversationId, 'Halo, kami siap membantu.');</code></pre>
                             <button type="button" onclick="copySnippet('code-fw-laravel', 'Kode Laravel Disalin!')" class="absolute top-3 right-3 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono transition-colors">Salin</button>
                         </div>
                     </div>
