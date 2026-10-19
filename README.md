@@ -13,11 +13,12 @@ Begitu di-install, aplikasi Anda **langsung mendapatkan halaman manajemen WhatsA
 
 ## Fitur Utama
 
-- **Halaman Manajemen Bawaan (`/waku/dashboard`)**: Dashboard visual instan dengan **Live QR Code Modal (Baileys Multi-Device)**, polling otomatis, status koneksi perangkat, dan live chat preview sandbox.
+- **Halaman Manajemen Bawaan (`/waku/dashboard` v1.2.2)**: Dashboard visual instan dengan **Live QR Code Modal (Baileys Multi-Device)**, panel **Bot & BYOK AI**, tema Dark/Light mode adaptif, polling otomatis, status koneksi perangkat, dan realistic WhatsApp chat preview sandbox.
+- **Multi-Tenant Bot Key & BYOK (`withBot()`)**: Dukungan routing pesan ke bot tenant tertentu (`wbk_live_...`) dengan kredensial AI Provider (OpenRouter, Google Gemini, OpenAI) terenkripsi AES-256-GCM.
 - **Proteksi Hak Akses & Role (`config/waku.php`)**: Memerlukan login (`auth`) secara default. Anda dapat membatasi akses ke dashboard hanya untuk peran tertentu (`allowed_roles` seperti `SUPER-ADMIN`, `ADMIN`) atau email tertentu (`allowed_emails`).
 - **Expressive Facade**: Kirim pesan dalam 1 baris kode: `WhatsApp::send('08123456789', 'Halo!');`.
 - **Dukungan Media Lengkap**: Kirim file faktur PDF (`sendDocument`), foto bukti pembayaran (`sendImage`), dan media lainnya.
-- **Isolasi Multi-Tenant**: Setiap aplikasi konsumen memiliki kredensial API Key dan sesi Baileys terisolasi.
+- **Isolasi Multi-Tenant**: Setiap aplikasi konsumen memiliki kredensial API Key, Bot Key, dan sesi Baileys terisolasi.
 - **Webhook HMAC-SHA256**: Menerima pesan masuk dan tanda terima status delivery secara otomatis di `/waku/api/webhook`.
 - **Artisan CLI Otomatis**: Inisialisasi satu langkah (`php artisan waku:install`), monitor status (`php artisan waku:status`), uji kirim pesan (`php artisan waku:test-send`), dan uninstaller bersih (`php artisan waku:uninstall`).
 - **Kompatibilitas Penuh**: Laravel 10, 11, 12, dan 13 (PHP 8.1 - 8.5).
@@ -56,6 +57,9 @@ WAKU_BASE_URL=http://localhost:3001/api/v1
 WAKU_APP_ID=wai_app_your_application_id
 WAKU_API_KEY=wai_live_your_secret_api_key
 WAKU_WEBHOOK_SECRET=wai_sec_your_webhook_secret
+
+# Default Bot Key (Opsional - Multi-Tenant BYOK Bot Routing v1.2.2)
+WAKU_DEFAULT_BOT_KEY=wbk_live_your_tenant_bot_key
 
 # Pengaturan Rute Unik & Akses Dashboard
 WAKU_DASHBOARD_ENABLED=true
@@ -158,29 +162,36 @@ Event::listen('whatsapp.message.received', function ($data, $appId) {
 ```
 
 
-### D. Multi-Tenant AI Customer Service & Bot Automation (Baru di v1.2.0)
+### D. Multi-Tenant AI Customer Service, Bot Key & BYOK (v1.2.2)
 
-Mulai versi `1.2.0`, WhatsApp Integration Gateway mendukung AI Customer Service, Chatbot Mode, Human Takeover, dan Grounding Knowledge Base langsung melalui Facade:
+Mulai versi `1.2.2`, WhatsApp Integration Gateway mendukung arsitektur multi-tenant SaaS penuh dengan **Bot Key terisolasi (`wbk_live_...`)**, **Bring Your Own Key (BYOK)**, serta routing bot dinamis:
 
 ```php
-use App\Facades\WhatsApp; // atau Diego1st\WhatsAppIntegration\Facades\WhatsApp
+use WaIntegration\Laravel\Facades\WhatsApp;
 
-// 1. Ambil atau Ubah Konfigurasi Bot Sesi
+// 1. Kirim Pesan / Interaksi Menggunakan Bot Key Tertentu
+WhatsApp::withBot('wbk_live_xxxxxxxxxxxxxx')
+    ->send('08123456789', 'Halo! Pesan ini diteruskan melalui Bot Key divisi CS.');
+
+// 2. Ambil Daftar Bot Tenant & Detail Bot Tertentu
+$bots = WhatsApp::getBots();
+$bot = WhatsApp::getBot($botId);
+
+// 3. Konfigurasi Bot Sesi & BYOK Provider (OpenRouter, Gemini, OpenAI)
 $config = WhatsApp::getBotConfig($sessionId);
 
-// Aktifkan bot AI dalam mode HYBRID dengan Google Gemini / OpenAI
-WhatsApp::updateBotConfig($sessionId, [
+WhatsApp::updateBotConfig([
     'botEnabled' => true,
     'mode' => 'HYBRID', // DISABLED | MENU_ONLY | AI_ONLY | HYBRID
-    'providerType' => 'GOOGLE_GEMINI',
-    'modelName' => 'gemini-1.5-flash',
-    'apiKey' => 'AIzaSyYourSecretKey', // Disimpan terenkripsi AES-256-GCM di backend
+    'providerType' => 'OPENROUTER', // OPENROUTER | GEMINI | OPENAI
+    'modelName' => 'meta-llama/llama-3.3-70b-instruct:free',
+    'apiKey' => 'sk-or-v1-xxxxxxxxxxxx', // Kredensial dienkripsi AES-256-GCM pada level data store
     'handoverKeywords' => ['admin', 'human', 'cs', 'bantuan'],
     'maxHistoryMessages' => 10,
-]);
+], $sessionId);
 
 // Toggle status bot on/off
-WhatsApp::toggleBot($sessionId, true);
+WhatsApp::toggleBot(true, $sessionId);
 
 // 2. Live Chat Inbox & Human Takeover (Handover)
 // Ambil daftar percakapan aktif

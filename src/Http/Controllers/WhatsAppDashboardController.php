@@ -149,10 +149,12 @@ class WhatsAppDashboardController extends Controller
         $appInfoRes = WhatsApp::getAppInfo();
         $sessionsRes = WhatsApp::getSessions();
         $messagesRes = WhatsApp::getMessages(1, 15);
+        $botsRes = WhatsApp::getBots();
 
         $appInfo = $appInfoRes->isSuccessful() ? $appInfoRes->data() : null;
         $sessions = $sessionsRes->isSuccessful() ? ($sessionsRes->data() ?? []) : [];
         $messages = $messagesRes->isSuccessful() ? ($messagesRes->data() ?? []) : [];
+        $bots = $botsRes->isSuccessful() ? ($botsRes->data() ?? []) : [];
 
         // Auto-create initial default session if none exists
         if (empty($sessions) && !empty(config('waku.api_key', config('whatsapp.api_key')))) {
@@ -185,6 +187,7 @@ class WhatsAppDashboardController extends Controller
         $config = [
             'baseUrl' => config('waku.base_url') ?? config('whatsapp.base_url'),
             'appId' => config('waku.app_id') ?? config('whatsapp.app_id'),
+            'defaultBotKey' => config('waku.default_bot_key') ?? config('whatsapp.default_bot_key', null),
             'hasApiKey' => !empty(config('waku.api_key') ?? config('whatsapp.api_key')),
             'hasWebhookSecret' => !empty(config('waku.webhook_secret') ?? config('whatsapp.webhook_secret')),
             'webhookUrl' => url($webhookPrefix),
@@ -193,7 +196,7 @@ class WhatsAppDashboardController extends Controller
             'allowedEmails' => config('waku.dashboard.allowed_emails', []),
         ];
 
-        return view('whatsapp::dashboard', compact('appInfo', 'sessions', 'messages', 'config', 'currentUser'));
+        return view('whatsapp::dashboard', compact('appInfo', 'sessions', 'messages', 'config', 'currentUser', 'bots'));
     }
 
     /**

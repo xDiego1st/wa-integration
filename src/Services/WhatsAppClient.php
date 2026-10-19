@@ -12,6 +12,8 @@ class WhatsAppClient
     protected ?string $apiKey;
     protected int $timeout;
     protected ?string $defaultSessionId;
+    protected ?string $defaultBotKey;
+    protected ?string $activeBotKey = null;
 
     public function __construct(array $config = [])
     {
@@ -20,6 +22,17 @@ class WhatsAppClient
         $this->apiKey = $config['api_key'] ?? null;
         $this->timeout = (int) ($config['timeout'] ?? 15);
         $this->defaultSessionId = $config['default_session_id'] ?? null;
+        $this->defaultBotKey = $config['default_bot_key'] ?? null;
+    }
+
+    /**
+     * Scope subsequent requests to a specific Bot Key.
+     */
+    public function withBot(string $botKey): self
+    {
+        $clone = clone $this;
+        $clone->activeBotKey = $botKey;
+        return $clone;
     }
 
     protected function request(string $method, string $endpoint, array $data = [], array $headers = []): WhatsAppResponse
@@ -50,6 +63,11 @@ class WhatsAppClient
             'X-Client-App-Name' => (string) $clientName,
             'Accept' => 'application/json',
         ];
+
+        $effectiveBotKey = $this->activeBotKey ?? $this->defaultBotKey;
+        if (!empty($effectiveBotKey)) {
+            $defaultHeaders['X-Bot-Key'] = $effectiveBotKey;
+        }
 
         try {
             $response = Http::timeout($this->timeout)
@@ -195,6 +213,16 @@ class WhatsAppClient
         return $this->updateBotConfig([
             'botMode' => $enabled ? 'HYBRID' : 'DISABLED',
         ], $sessionId);
+    }
+
+    public function getBots(): WhatsAppResponse
+    {
+        return $this->request('get', 'ai-cs/bots');
+    }
+
+    public function getBot(string $botId): WhatsAppResponse
+    {
+        return $this->request('get', "ai-cs/bots/{$botId}");
     }
 
     public function getPersonas(): WhatsAppResponse

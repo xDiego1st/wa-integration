@@ -36,11 +36,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Session ID (Optional)
+    | Default Session ID & Bot Key (Optional)
     |--------------------------------------------------------------------------
-    | If your application has multiple sessions, specify the default session ID.
+    | If your application has multiple sessions or bots, specify the default identifiers.
     */
     'default_session_id' => env('WAKU_DEFAULT_SESSION_ID', env('WHATSAPP_DEFAULT_SESSION_ID', null)),
+    'default_bot_key' => env('WAKU_DEFAULT_BOT_KEY', null),
 
     /*
     |--------------------------------------------------------------------------
