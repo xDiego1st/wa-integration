@@ -159,6 +159,76 @@
         html:not(.dark) [class*="border-slate-700"] {
             border-color: #e2e8f0 !important;
         }
+        /* Colored Pills and Badges in Light Mode */
+        html:not(.dark) [class*="bg-emerald-950"] {
+            background-color: #ecfdf5 !important;
+            border-color: #a7f3d0 !important;
+        }
+        html:not(.dark) [class*="bg-teal-950"] {
+            background-color: #f0fdfa !important;
+            border-color: #99f6e4 !important;
+        }
+        html:not(.dark) [class*="bg-rose-950"] {
+            background-color: #fff1f2 !important;
+            border-color: #fecdd3 !important;
+        }
+        html:not(.dark) [class*="bg-amber-950"] {
+            background-color: #fffbeb !important;
+            border-color: #fde68a !important;
+        }
+        html:not(.dark) [class*="bg-purple-950"] {
+            background-color: #faf5ff !important;
+            border-color: #e9d5ff !important;
+        }
+        html:not(.dark) [class*="bg-sky-950"] {
+            background-color: #f0f9ff !important;
+            border-color: #bae6fd !important;
+        }
+        html:not(.dark) [class*="border-emerald-800"],
+        html:not(.dark) [class*="border-emerald-700"] {
+            border-color: #a7f3d0 !important;
+        }
+        html:not(.dark) [class*="border-teal-800"],
+        html:not(.dark) [class*="border-teal-700"] {
+            border-color: #99f6e4 !important;
+        }
+        html:not(.dark) [class*="border-rose-800"],
+        html:not(.dark) [class*="border-rose-700"] {
+            border-color: #fecdd3 !important;
+        }
+        html:not(.dark) [class*="border-amber-800"],
+        html:not(.dark) [class*="border-amber-700"] {
+            border-color: #fde68a !important;
+        }
+        html:not(.dark) [class*="border-purple-800"],
+        html:not(.dark) [class*="border-purple-700"] {
+            border-color: #e9d5ff !important;
+        }
+        html:not(.dark) [class*="border-sky-800"],
+        html:not(.dark) [class*="border-sky-700"] {
+            border-color: #bae6fd !important;
+        }
+        html:not(.dark) .text-teal-200,
+        html:not(.dark) .text-teal-300 {
+            color: #0f766e !important;
+        }
+        html:not(.dark) .text-emerald-300,
+        html:not(.dark) .text-emerald-400 {
+            color: #065f46 !important;
+        }
+        html:not(.dark) .text-rose-200,
+        html:not(.dark) .text-rose-300,
+        html:not(.dark) .text-rose-400 {
+            color: #be123c !important;
+        }
+        html:not(.dark) .text-amber-200,
+        html:not(.dark) .text-amber-300 {
+            color: #b45309 !important;
+        }
+        html:not(.dark) .text-purple-300,
+        html:not(.dark) .text-purple-400 {
+            color: #7e22ce !important;
+        }
         html:not(.dark) input,
         html:not(.dark) select,
         html:not(.dark) textarea {
@@ -242,13 +312,13 @@
                     @endif
 
                     @if(isset($currentUser) && $currentUser)
-                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-800/60 text-xs">
+                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 text-xs shadow-xs">
                             <div class="w-6 h-6 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 flex items-center justify-center font-black text-[11px] shadow-sm">
                                 {{ strtoupper(substr($currentUser['name'] ?? 'U', 0, 1)) }}
                             </div>
                             <div class="hidden sm:block text-left">
-                                <div class="font-bold text-slate-200 leading-tight">{{ Str::limit($currentUser['name'], 14) }}</div>
-                                <div class="text-[10px] text-emerald-400 font-mono">{{ $currentUser['role'] ?? 'User' }}</div>
+                                <div class="font-bold text-slate-800 dark:text-slate-200 leading-tight">{{ Str::limit($currentUser['name'], 14) }}</div>
+                                <div class="text-[10px] text-emerald-700 dark:text-emerald-400 font-mono font-semibold">{{ $currentUser['role'] ?? 'User' }}</div>
                             </div>
                         </div>
                     @endif
@@ -338,14 +408,16 @@
     <!-- Main Content Container -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 w-full space-y-6 relative z-10">
 
-        <!-- Banner Peringatan Kredensial -->
+        <!-- Banner Peringatan Kredensial (Danger / Red Theme) -->
         @if(!$config['hasApiKey'])
-            <div class="rounded-2xl p-4 sm:p-5 bg-gradient-to-r from-amber-950/80 to-amber-900/60 border border-amber-600/40 text-amber-200 flex items-start gap-3.5 shadow-lg shadow-amber-950/30">
-                <svg class="w-6 h-6 text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <div class="rounded-2xl p-4 sm:p-5 bg-gradient-to-r from-red-50 to-rose-50 dark:from-rose-950/80 dark:to-red-950/60 border border-red-300 dark:border-rose-600/40 text-red-900 dark:text-rose-200 flex items-start gap-3.5 shadow-lg shadow-red-500/10 dark:shadow-rose-950/30">
+                <div class="p-2 rounded-xl bg-red-100 dark:bg-rose-900/60 text-red-600 dark:text-rose-400 shrink-0 mt-0.5 border border-red-200 dark:border-rose-700/50">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                </div>
                 <div class="text-xs sm:text-sm">
-                    <p class="font-bold text-amber-300">Variabel Lingkungan Belum Lengkap!</p>
-                    <p class="text-amber-200/90 mt-1">
-                        Kunci API belum terkonfigurasi. Jalankan <code class="font-mono bg-amber-950/90 px-1.5 py-0.5 rounded text-amber-300 font-bold">php artisan waku:install</code> atau definisikan <code class="font-mono bg-amber-950/90 px-1.5 py-0.5 rounded text-amber-300 font-bold">WAKU_API_KEY</code> di berkas <code class="font-mono bg-amber-950/90 px-1.5 py-0.5 rounded text-amber-300">.env</code> Anda.
+                    <p class="font-bold text-red-900 dark:text-rose-300 text-sm sm:text-base">Variabel Lingkungan Belum Lengkap!</p>
+                    <p class="text-red-800 dark:text-rose-200/90 mt-1 leading-relaxed">
+                        Kunci API belum terkonfigurasi. Jalankan <code class="font-mono bg-red-100 dark:bg-rose-950/90 border border-red-200 dark:border-rose-800/60 px-1.5 py-0.5 rounded text-red-900 dark:text-rose-300 font-bold">php artisan waku:install</code> atau definisikan <code class="font-mono bg-red-100 dark:bg-rose-950/90 border border-red-200 dark:border-rose-800/60 px-1.5 py-0.5 rounded text-red-900 dark:text-rose-300 font-bold">WAKU_API_KEY</code> di berkas <code class="font-mono bg-red-100 dark:bg-rose-950/90 border border-red-200 dark:border-rose-800/60 px-1.5 py-0.5 rounded text-red-900 dark:text-rose-300">.env</code> Anda.
                     </p>
                 </div>
             </div>
@@ -540,24 +612,24 @@
                                     @endif
 
                                     <!-- Tombol Hapus Sesi -->
-                                    <button type="button" onclick="deleteSessionById('{{ $sessId }}', '{{ $sessName }}')" class="p-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 hover:text-rose-200 border border-rose-800/40 text-xs font-semibold transition-colors" title="Hapus Sesi Secara Permanen">
+                                    <button type="button" onclick="deleteSessionById('{{ $sessId }}', '{{ $sessName }}')" class="p-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-200 border border-rose-200 dark:border-rose-800/40 text-xs font-semibold transition-colors shadow-xs" title="Hapus Sesi Secara Permanen">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                     </button>
                                 </div>
                             </div>
                         @empty
-                            <div class="p-8 text-center rounded-2xl border border-dashed border-slate-800 bg-slate-900/40">
-                                <p class="text-xs text-slate-400">Belum ada sesi terdaftar. Klik <strong>Tambah Sesi Baru</strong> di atas untuk memulai.</p>
+                            <div class="p-8 text-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40">
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Belum ada sesi terdaftar. Klik <strong class="text-slate-800 dark:text-slate-200">Tambah Sesi Baru</strong> di atas untuk memulai.</p>
                             </div>
                         @endforelse
                     </div>
 
                     <!-- Anti-Spam Notice -->
-                    <div class="p-4 rounded-2xl bg-teal-950/40 border border-teal-800/40 text-xs text-teal-200/90 flex items-start gap-3">
-                        <svg class="w-5 h-5 text-teal-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <div class="p-4 rounded-2xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800/40 text-xs text-teal-900 dark:text-teal-200/90 flex items-start gap-3 shadow-sm">
+                        <svg class="w-5 h-5 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         <div>
-                            <span class="font-bold text-teal-300">Proteksi Anti-Spam Berbasis Load Balancer:</span>
-                            <span class="text-teal-200/80"> Pesan keluar otomatis dirotasi secara seimbang antar-nomor yang aktif terhubung untuk mencegah pemblokiran nomor oleh WhatsApp.</span>
+                            <span class="font-bold text-teal-900 dark:text-teal-300">Proteksi Anti-Spam Berbasis Load Balancer:</span>
+                            <span class="text-teal-800 dark:text-teal-200/80"> Pesan keluar otomatis dirotasi secara seimbang antar-nomor yang aktif terhubung untuk mencegah pemblokiran nomor oleh WhatsApp.</span>
                         </div>
                     </div>
                 </div>
@@ -751,11 +823,11 @@
                     </div>
 
                     @if($defaultBotKey)
-                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-purple-950/60 border border-purple-800/60 text-xs">
-                            <span class="text-slate-400 font-medium">Default Bot Key:</span>
-                            <button type="button" onclick="copySnippet('{{ $defaultBotKey }}', 'Bot Key Disalin!')" class="font-mono font-bold text-purple-300 hover:text-purple-200 flex items-center gap-1.5">
+                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800/60 text-xs shadow-xs">
+                            <span class="text-slate-500 dark:text-slate-400 font-medium">Default Bot Key:</span>
+                            <button type="button" onclick="copySnippet('{{ $defaultBotKey }}', 'Bot Key Disalin!')" class="font-mono font-bold text-purple-700 dark:text-purple-300 hover:text-purple-900 dark:hover:text-purple-200 flex items-center gap-1.5">
                                 {{ Str::limit($defaultBotKey, 18) }}
-                                <svg class="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                <svg class="w-3.5 h-3.5 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                             </button>
                         </div>
                     @endif
