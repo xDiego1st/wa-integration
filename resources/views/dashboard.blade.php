@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Waku Dashboard v1.2.3 — Panel Kontrol WhatsApp Gateway Multi-Device &amp; BYOK AI</title>
+    <title>Waku Dashboard v1.2.4 — Panel Kontrol WhatsApp Gateway Multi-Device &amp; BYOK AI</title>
     
     <!-- Standalone Tailwind CSS & Curated Typography -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -286,7 +286,7 @@
                             <span class="text-base sm:text-lg font-extrabold text-slate-100 dark:text-slate-100 tracking-tight flex items-center gap-2">
                                 <span>Waku Dashboard</span>
                             </span>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-xs shadow-emerald-500/20">v1.2.3</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-xs shadow-emerald-500/20">v1.2.4</span>
                             <span class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/10 text-teal-300 border border-teal-500/20">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> 24/7 Steady
                             </span>
@@ -1769,7 +1769,7 @@ composer remove xdiego1st/wa-integration</code></pre>
 
     <!-- Footer -->
     <footer class="glass-header py-5 text-center text-xs text-slate-500 mt-auto border-t border-slate-800">
-        &copy; {{ date('Y') }} PlatformCore WhatsApp Gateway (Waku Dashboard v1.2.3). Dilindungi Hak Cipta.
+        &copy; {{ date('Y') }} PlatformCore WhatsApp Gateway (Waku Dashboard v1.2.4). Dilindungi Hak Cipta.
     </footer>
 
     <!-- =============================================================== -->
