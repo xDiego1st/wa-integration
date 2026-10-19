@@ -99,6 +99,7 @@ class WhatsAppServiceProvider extends ServiceProvider
             'prefix' => $prefix,
             'middleware' => $middleware,
         ], function () {
+            // Main Dashboard & Sessions
             Route::get('/', [WhatsAppDashboardController::class, 'index'])->name('waku.dashboard');
             Route::get('/qr', [WhatsAppDashboardController::class, 'qr'])->name('waku.qr');
             Route::post('/connect', [WhatsAppDashboardController::class, 'connect'])->name('waku.connect');
@@ -107,6 +108,48 @@ class WhatsAppServiceProvider extends ServiceProvider
             Route::post('/sessions', [WhatsAppDashboardController::class, 'createSession'])->name('waku.create-session');
             Route::post('/sessions/{id}/delete', [WhatsAppDashboardController::class, 'deleteSession'])->name('waku.delete-session');
             Route::delete('/sessions/{id}', [WhatsAppDashboardController::class, 'deleteSession']);
+
+            // Live Chat Inbox & Human Handover
+            Route::get('/conversations', [WhatsAppDashboardController::class, 'getConversations'])->name('waku.conversations');
+            Route::get('/conversations/{id}', [WhatsAppDashboardController::class, 'getConversation'])->name('waku.conversation.detail');
+            Route::post('/conversations/{id}/reply', [WhatsAppDashboardController::class, 'sendConversationReply'])->name('waku.conversation.reply');
+            Route::post('/conversations/{id}/takeover', [WhatsAppDashboardController::class, 'takeoverConversation'])->name('waku.conversation.takeover');
+            Route::post('/conversations/{id}/return-to-bot', [WhatsAppDashboardController::class, 'returnConversationToBot'])->name('waku.conversation.return-to-bot');
+            Route::post('/conversations/{id}/resolve', [WhatsAppDashboardController::class, 'resolveConversation'])->name('waku.conversation.resolve');
+            Route::post('/conversations/{id}/notes', [WhatsAppDashboardController::class, 'addConversationNote'])->name('waku.conversation.notes');
+
+            // AI CS & BYOK
+            Route::post('/ai/config', [WhatsAppDashboardController::class, 'updateBotConfig'])->name('waku.ai.config');
+            Route::post('/ai/persona', [WhatsAppDashboardController::class, 'upsertPersona'])->name('waku.ai.persona');
+            Route::post('/ai/playground/chat', [WhatsAppDashboardController::class, 'chatPlayground'])->name('waku.ai.playground.chat');
+            Route::post('/ai/playground/test', [WhatsAppDashboardController::class, 'testPlayground'])->name('waku.ai.playground.test');
+
+            // Knowledge Base
+            Route::get('/knowledge', [WhatsAppDashboardController::class, 'getKnowledgeBases'])->name('waku.knowledge');
+            Route::post('/knowledge', [WhatsAppDashboardController::class, 'createKnowledgeBase'])->name('waku.knowledge.create');
+            Route::post('/knowledge/{id}/documents', [WhatsAppDashboardController::class, 'addKnowledgeDocument'])->name('waku.knowledge.document.add');
+            Route::delete('/knowledge/documents/{docId}', [WhatsAppDashboardController::class, 'deleteKnowledgeDocument'])->name('waku.knowledge.document.delete');
+            Route::post('/knowledge/documents/{docId}/delete', [WhatsAppDashboardController::class, 'deleteKnowledgeDocument']);
+
+            // Chatbot Automation Flows
+            Route::get('/flows', [WhatsAppDashboardController::class, 'getFlows'])->name('waku.flows');
+            Route::post('/flows', [WhatsAppDashboardController::class, 'upsertFlow'])->name('waku.flows.save');
+
+            // Broadcast & Campaigns
+            Route::get('/broadcasts', [WhatsAppDashboardController::class, 'getBroadcasts'])->name('waku.broadcasts');
+            Route::post('/broadcasts', [WhatsAppDashboardController::class, 'createBroadcast'])->name('waku.broadcasts.create');
+            Route::get('/broadcasts/{id}/stats', [WhatsAppDashboardController::class, 'getBroadcastStats'])->name('waku.broadcasts.stats');
+
+            // Teams & Workload
+            Route::get('/teams', [WhatsAppDashboardController::class, 'getTeams'])->name('waku.teams');
+            Route::get('/teams/workload', [WhatsAppDashboardController::class, 'getAgentsWorkload'])->name('waku.teams.workload');
+
+            // Automations & Business Hours
+            Route::get('/automations', [WhatsAppDashboardController::class, 'getAutomations'])->name('waku.automations');
+            Route::post('/automations/rules', [WhatsAppDashboardController::class, 'createAutomationRule'])->name('waku.automations.rules.create');
+            Route::get('/automations/business-hours', [WhatsAppDashboardController::class, 'getBusinessHours'])->name('waku.automations.business-hours');
+            Route::put('/automations/business-hours', [WhatsAppDashboardController::class, 'saveBusinessHours'])->name('waku.automations.business-hours.save');
+            Route::post('/automations/business-hours', [WhatsAppDashboardController::class, 'saveBusinessHours']);
         });
     }
 }

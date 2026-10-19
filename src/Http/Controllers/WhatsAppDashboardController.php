@@ -150,11 +150,27 @@ class WhatsAppDashboardController extends Controller
         $sessionsRes = WhatsApp::getSessions();
         $messagesRes = WhatsApp::getMessages(1, 15);
         $botsRes = WhatsApp::getBots();
+        $conversationsRes = WhatsApp::getConversations(['perPage' => 15]);
+        $knowledgeRes = WhatsApp::getKnowledgeBases();
+        $flowsRes = WhatsApp::getFlows();
+        $broadcastsRes = WhatsApp::getBroadcasts(1, 10);
+        $teamsRes = WhatsApp::getTeams();
+        $automationsRes = WhatsApp::getAutomations();
+        $usageSummaryRes = WhatsApp::getAiUsageSummary();
+        $businessHoursRes = WhatsApp::getBusinessHours();
 
         $appInfo = $appInfoRes->isSuccessful() ? $appInfoRes->data() : null;
         $sessions = $sessionsRes->isSuccessful() ? ($sessionsRes->data() ?? []) : [];
         $messages = $messagesRes->isSuccessful() ? ($messagesRes->data() ?? []) : [];
         $bots = $botsRes->isSuccessful() ? ($botsRes->data() ?? []) : [];
+        $conversations = $conversationsRes->isSuccessful() ? ($conversationsRes->data() ?? []) : [];
+        $knowledgeBases = $knowledgeRes->isSuccessful() ? ($knowledgeRes->data() ?? []) : [];
+        $flows = $flowsRes->isSuccessful() ? ($flowsRes->data() ?? []) : [];
+        $broadcasts = $broadcastsRes->isSuccessful() ? ($broadcastsRes->data() ?? []) : [];
+        $teams = $teamsRes->isSuccessful() ? ($teamsRes->data() ?? []) : [];
+        $automations = $automationsRes->isSuccessful() ? ($automationsRes->data() ?? []) : [];
+        $usageSummary = $usageSummaryRes->isSuccessful() ? ($usageSummaryRes->data() ?? []) : [];
+        $businessHours = $businessHoursRes->isSuccessful() ? ($businessHoursRes->data() ?? []) : [];
 
         // Auto-create initial default session if none exists
         if (empty($sessions) && !empty(config('waku.api_key', config('whatsapp.api_key')))) {
@@ -196,7 +212,22 @@ class WhatsAppDashboardController extends Controller
             'allowedEmails' => config('waku.dashboard.allowed_emails', []),
         ];
 
-        return view('whatsapp::dashboard', compact('appInfo', 'sessions', 'messages', 'config', 'currentUser', 'bots'));
+        return view('whatsapp::dashboard', compact(
+            'appInfo',
+            'sessions',
+            'messages',
+            'config',
+            'currentUser',
+            'bots',
+            'conversations',
+            'knowledgeBases',
+            'flows',
+            'broadcasts',
+            'teams',
+            'automations',
+            'usageSummary',
+            'businessHours'
+        ));
     }
 
     /**
@@ -342,5 +373,284 @@ class WhatsAppDashboardController extends Controller
             'data' => $res->data(),
             'error' => $res->error(),
         ], $res->isSuccessful() ? 200 : 400);
+    }
+
+    // ── Live Chat Inbox & Human Handover ─────────────────────────────────
+
+    public function getConversations(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $filters = $request->only(['status', 'mode', 'search', 'page', 'perPage']);
+        $res = WhatsApp::getConversations($filters);
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function getConversation(Request $request, string $id)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $res = WhatsApp::getConversation($id);
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function sendConversationReply(Request $request, string $id)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $content = $request->input('content', '');
+        $res = WhatsApp::sendConversationReply($id, $content);
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function takeoverConversation(Request $request, string $id)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $res = WhatsApp::takeoverConversation($id);
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function returnConversationToBot(Request $request, string $id)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $res = WhatsApp::returnConversationToBot($id);
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function resolveConversation(Request $request, string $id)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $res = WhatsApp::resolveConversation($id);
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function addConversationNote(Request $request, string $id)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $content = $request->input('content', '');
+        $res = WhatsApp::addConversationNote($id, $content);
+        return response()->json($res->json(), $res->status());
+    }
+
+    // ── AI CS & BYOK Configuration ───────────────────────────────────────
+
+    public function updateBotConfig(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $data = $request->all();
+        $sessionId = $request->input('sessionId');
+        $res = WhatsApp::updateBotConfig($data, $sessionId);
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function upsertPersona(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $data = $request->all();
+        $res = WhatsApp::upsertPersona($data);
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function chatPlayground(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $message = $request->input('message', '');
+        $sessionId = $request->input('sessionId');
+        $personaId = $request->input('personaId');
+        $knowledgeBaseId = $request->input('knowledgeBaseId');
+
+        $res = WhatsApp::chatPlayground($message, $sessionId, $personaId, $knowledgeBaseId);
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function testPlayground(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $prompt = $request->input('prompt', '');
+        $personaId = $request->input('personaId');
+        $knowledgeBaseId = $request->input('knowledgeBaseId');
+        $sessionId = $request->input('sessionId');
+
+        $res = WhatsApp::testPlayground($prompt, $personaId, $knowledgeBaseId, $sessionId);
+        return response()->json($res->json(), $res->status());
+    }
+
+    // ── Knowledge Base ───────────────────────────────────────────────────
+
+    public function getKnowledgeBases(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $res = WhatsApp::getKnowledgeBases();
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function createKnowledgeBase(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $name = $request->input('name');
+        $description = $request->input('description');
+        $res = WhatsApp::createKnowledgeBase($name, $description);
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function addKnowledgeDocument(Request $request, string $id)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $title = $request->input('title');
+        $content = $request->input('content');
+        $contentType = $request->input('contentType', 'text/plain');
+
+        $res = WhatsApp::addKnowledgeDocument($id, $title, $content, $contentType);
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function deleteKnowledgeDocument(Request $request, string $docId)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $res = WhatsApp::deleteKnowledgeDocument($docId);
+        return response()->json($res->json(), $res->status());
+    }
+
+    // ── Chatbot Flows ────────────────────────────────────────────────────
+
+    public function getFlows(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $res = WhatsApp::getFlows();
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function upsertFlow(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $data = $request->all();
+        $res = WhatsApp::upsertFlow($data);
+        return response()->json($res->json(), $res->status());
+    }
+
+    // ── Broadcasts & Campaigns ───────────────────────────────────────────
+
+    public function getBroadcasts(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $page = (int) $request->input('page', 1);
+        $perPage = (int) $request->input('perPage', 20);
+        $search = $request->input('search');
+        $status = $request->input('status');
+
+        $res = WhatsApp::getBroadcasts($page, $perPage, $search, $status);
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function createBroadcast(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $data = $request->all();
+        $res = WhatsApp::createBroadcast($data);
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function getBroadcastStats(Request $request, string $id)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $res = WhatsApp::getBroadcastStats($id);
+        return response()->json($res->json(), $res->status());
+    }
+
+    // ── Teams & Agent Workload ───────────────────────────────────────────
+
+    public function getTeams(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $res = WhatsApp::getTeams();
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function getAgentsWorkload(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $res = WhatsApp::getAgentsWorkload();
+        return response()->json($res->json(), $res->status());
+    }
+
+    // ── Automations & Business Hours ─────────────────────────────────────
+
+    public function getAutomations(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $res = WhatsApp::getAutomations();
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function createAutomationRule(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $data = $request->all();
+        $res = WhatsApp::createAutomationRule($data);
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function getBusinessHours(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $res = WhatsApp::getBusinessHours();
+        return response()->json($res->json(), $res->status());
+    }
+
+    public function saveBusinessHours(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $data = $request->all();
+        $res = WhatsApp::saveBusinessHours($data);
+        return response()->json($res->json(), $res->status());
     }
 }

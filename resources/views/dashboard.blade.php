@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Waku Dashboard v1.2.2 — Panel Kontrol WhatsApp Gateway Multi-Device &amp; BYOK AI</title>
+    <title>Waku Dashboard v1.2.3 — Panel Kontrol WhatsApp Gateway Multi-Device &amp; BYOK AI</title>
     
     <!-- Standalone Tailwind CSS & Curated Typography -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -121,7 +121,71 @@
             background-image: radial-gradient(#d1d7db 1px, transparent 1px);
             background-size: 18px 18px;
         }
+
+        /* Unified Light Theme System Overrides */
+        html:not(.dark) body {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+        html:not(.dark) .text-slate-100,
+        html:not(.dark) .text-slate-200 {
+            color: #0f172a !important;
+        }
+        html:not(.dark) .text-slate-300 {
+            color: #1e293b !important;
+        }
+        html:not(.dark) .text-slate-400 {
+            color: #475569 !important;
+        }
+        html:not(.dark) .text-slate-500 {
+            color: #64748b !important;
+        }
+        html:not(.dark) [class*="bg-slate-950"] {
+            background-color: #ffffff !important;
+        }
+        html:not(.dark) [class*="bg-slate-900"] {
+            background-color: #ffffff !important;
+        }
+        html:not(.dark) [class*="bg-slate-850"] {
+            background-color: #f8fafc !important;
+        }
+        html:not(.dark) [class*="bg-slate-800"] {
+            background-color: #f1f5f9 !important;
+        }
+        html:not(.dark) [class*="divide-slate-800"] > :not([hidden]) ~ :not([hidden]) {
+            border-color: #e2e8f0 !important;
+        }
+        html:not(.dark) [class*="border-slate-800"],
+        html:not(.dark) [class*="border-slate-700"] {
+            border-color: #e2e8f0 !important;
+        }
+        html:not(.dark) input,
+        html:not(.dark) select,
+        html:not(.dark) textarea {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border-color: #cbd5e1 !important;
+        }
+        html:not(.dark) input::placeholder,
+        html:not(.dark) textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+        html:not(.dark) .ambient-glow {
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, rgba(13, 148, 136, 0.03) 50%, transparent 80%) !important;
+        }
     </style>
+    <script>
+        (function() {
+            try {
+                var theme = localStorage.getItem('waku_theme');
+                if (theme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                } else if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch(e) {}
+        })();
+    </script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white transition-colors duration-200">
 
@@ -152,7 +216,7 @@
                             <span class="text-base sm:text-lg font-extrabold text-slate-100 dark:text-slate-100 tracking-tight flex items-center gap-2">
                                 <span>Waku Dashboard</span>
                             </span>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-xs shadow-emerald-500/20">v1.2.2</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-xs shadow-emerald-500/20">v1.2.3</span>
                             <span class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/10 text-teal-300 border border-teal-500/20">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> 24/7 Steady
                             </span>
@@ -198,39 +262,74 @@
                 </div>
             </div>
 
-            <!-- Navigation Tabs Bar -->
-            <nav class="flex space-x-1.5 sm:space-x-3 border-t border-slate-800/80 pt-2 -mb-px overflow-x-auto no-scrollbar" aria-label="Tabs">
-                <button type="button" onclick="switchTab('tab-connection')" id="btn-tab-connection" class="tab-btn inline-flex items-center gap-2 py-2.5 px-3 text-xs sm:text-sm font-bold border-b-2 border-emerald-500 text-emerald-400 whitespace-nowrap transition-all">
+            <!-- Navigation Tabs Bar (Full Master PRD Customer Service Suite) -->
+            <nav class="flex space-x-1 sm:space-x-2 border-t border-slate-800/80 pt-2 -mb-px overflow-x-auto no-scrollbar" aria-label="Tabs">
+                <button type="button" onclick="switchTab('tab-connection')" id="btn-tab-connection" class="tab-btn inline-flex items-center gap-1.5 py-2 px-2.5 text-xs font-bold border-b-2 border-emerald-500 text-emerald-400 whitespace-nowrap transition-all">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                     <span>Koneksi WhatsApp</span>
                     <span class="px-1.5 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">{{ $activeSessionCount }}/{{ $maxSessionsAllowed }}</span>
                 </button>
 
-                <button type="button" onclick="switchTab('tab-byok-bot')" id="btn-tab-byok-bot" class="tab-btn inline-flex items-center gap-2 py-2.5 px-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
+                <button type="button" onclick="switchTab('tab-inbox')" id="btn-tab-inbox" class="tab-btn inline-flex items-center gap-1.5 py-2 px-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+                    <span>Live Chat Inbox</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                </button>
+
+                <button type="button" onclick="switchTab('tab-byok-bot')" id="btn-tab-byok-bot" class="tab-btn inline-flex items-center gap-1.5 py-2 px-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                     <span>Bot &amp; BYOK AI</span>
-                    <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 animate-pulse">v1.2.2</span>
+                    <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">BYOK</span>
                 </button>
 
-                <button type="button" onclick="switchTab('tab-send')" id="btn-tab-send" class="tab-btn inline-flex items-center gap-2 py-2.5 px-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
+                <button type="button" onclick="switchTab('tab-knowledge')" id="btn-tab-knowledge" class="tab-btn inline-flex items-center gap-1.5 py-2 px-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    <span>Knowledge Base</span>
+                </button>
+
+                <button type="button" onclick="switchTab('tab-flows')" id="btn-tab-flows" class="tab-btn inline-flex items-center gap-1.5 py-2 px-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+                    <span>Chatbot Flows</span>
+                </button>
+
+                <button type="button" onclick="switchTab('tab-playground')" id="btn-tab-playground" class="tab-btn inline-flex items-center gap-1.5 py-2 px-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>AI Playground</span>
+                </button>
+
+                <button type="button" onclick="switchTab('tab-broadcast')" id="btn-tab-broadcast" class="tab-btn inline-flex items-center gap-1.5 py-2 px-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+                    <span>Broadcast</span>
+                </button>
+
+                <button type="button" onclick="switchTab('tab-teams')" id="btn-tab-teams" class="tab-btn inline-flex items-center gap-1.5 py-2 px-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    <span>Tim &amp; Beban</span>
+                </button>
+
+                <button type="button" onclick="switchTab('tab-automations')" id="btn-tab-automations" class="tab-btn inline-flex items-center gap-1.5 py-2 px-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>Jam Kerja &amp; Otomasi</span>
+                </button>
+
+                <button type="button" onclick="switchTab('tab-send')" id="btn-tab-send" class="tab-btn inline-flex items-center gap-1.5 py-2 px-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                    <span>Uji Kirim Pesan &amp; Mockup</span>
+                    <span>Uji Kirim</span>
                 </button>
 
-                <button type="button" onclick="switchTab('tab-messages')" id="btn-tab-messages" class="tab-btn inline-flex items-center gap-2 py-2.5 px-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
+                <button type="button" onclick="switchTab('tab-messages')" id="btn-tab-messages" class="tab-btn inline-flex items-center gap-1.5 py-2 px-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                     <span>Riwayat Pesan</span>
                 </button>
 
-                <button type="button" onclick="switchTab('tab-api-guide')" id="btn-tab-api-guide" class="tab-btn inline-flex items-center gap-2 py-2.5 px-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-                    <span>Integrasi Code</span>
-                    <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">7 Stacks</span>
+                <button type="button" onclick="switchTab('tab-usage')" id="btn-tab-usage" class="tab-btn inline-flex items-center gap-1.5 py-2 px-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    <span>Biaya &amp; Token</span>
                 </button>
 
-                <button type="button" onclick="switchTab('tab-lifecycle')" id="btn-tab-lifecycle" class="tab-btn inline-flex items-center gap-2 py-2.5 px-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
+                <button type="button" onclick="switchTab('tab-lifecycle')" id="btn-tab-lifecycle" class="tab-btn inline-flex items-center gap-1.5 py-2 px-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                    <span>Role &amp; Konfigurasi</span>
+                    <span>Integrasi</span>
                 </button>
             </nav>
         </div>
@@ -468,6 +567,173 @@
         </div>
 
         <!-- =============================================================== -->
+        <!-- TAB: LIVE CHAT INBOX (MASTER-DETAIL WORKSPACE)                  -->
+        <!-- =============================================================== -->
+        <div id="tab-inbox" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-3xl overflow-hidden shadow-xl border-emerald-500/20">
+                
+                <!-- Inbox Layout: Split Panes -->
+                <div class="grid grid-cols-1 md:grid-cols-12 min-h-[640px] max-h-[720px] divide-y md:divide-y-0 md:divide-x divide-slate-800">
+                    
+                    <!-- Left Column: Conversation List -->
+                    <div class="md:col-span-4 lg:col-span-4 flex flex-col bg-slate-900/40">
+                        
+                        <!-- Search & Quick Filters -->
+                        <div class="p-4 border-b border-slate-800 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span>Percakapan Pelanggan</span>
+                                </h3>
+                                <span class="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20" id="inbox-count-badge">{{ count($conversations['items'] ?? $conversations) }} Sesi</span>
+                            </div>
+
+                            <div class="relative">
+                                <input type="text" id="inbox-search" placeholder="Cari nomor atau nama..." onkeyup="filterInboxConversations()" class="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950/80 border border-slate-700/60 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                                <svg class="w-4 h-4 text-slate-500 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            </div>
+
+                            <!-- Filter Pills -->
+                            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[11px]">
+                                <button type="button" onclick="setInboxFilter('all')" class="inbox-filter-btn px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 whitespace-nowrap">Semua</button>
+                                <button type="button" onclick="setInboxFilter('AI')" class="inbox-filter-btn px-2.5 py-1 rounded-lg bg-slate-800/80 text-slate-400 font-medium hover:text-slate-200 whitespace-nowrap">AI Aktif</button>
+                                <button type="button" onclick="setInboxFilter('AGENT')" class="inbox-filter-btn px-2.5 py-1 rounded-lg bg-slate-800/80 text-slate-400 font-medium hover:text-slate-200 whitespace-nowrap">Handover</button>
+                                <button type="button" onclick="setInboxFilter('RESOLVED')" class="inbox-filter-btn px-2.5 py-1 rounded-lg bg-slate-800/80 text-slate-400 font-medium hover:text-slate-200 whitespace-nowrap">Selesai</button>
+                            </div>
+                        </div>
+
+                        <!-- Conversation List Items Container -->
+                        <div class="flex-1 overflow-y-auto divide-y divide-slate-800/50 p-2 space-y-1" id="inbox-conversation-list">
+                            @forelse($conversations['items'] ?? $conversations as $c)
+                                @php
+                                    $contact = $c['contact'] ?? null;
+                                    $contactName = $contact['name'] ?? $c['customerNumber'] ?? $c['senderPhone'] ?? 'Pelanggan';
+                                    $contactPhone = $contact['phone'] ?? $c['customerNumber'] ?? $c['senderPhone'] ?? '-';
+                                    $mode = $c['mode'] ?? 'BOT';
+                                    $status = $c['status'] ?? 'OPEN';
+                                    $lastMsg = $c['lastMessagePreview'] ?? 'Tidak ada pesan terbaru';
+                                @endphp
+                                <div onclick="selectConversation('{{ $c['id'] }}', '{{ $contactName }}', '{{ $contactPhone }}', '{{ $mode }}', '{{ $status }}')" class="inbox-item p-3 rounded-2xl cursor-pointer hover:bg-slate-800/60 transition-all border border-transparent hover:border-slate-700/50" data-id="{{ $c['id'] }}" data-mode="{{ $mode }}" data-status="{{ $status }}" data-name="{{ strtolower($contactName) }}" data-phone="{{ $contactPhone }}">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-slate-800 to-slate-700 text-slate-200 flex items-center justify-center font-bold text-sm shrink-0 border border-slate-600/40">
+                                            {{ strtoupper(substr($contactName, 0, 1)) }}
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-center justify-between gap-1">
+                                                <h4 class="text-xs font-bold text-slate-100 truncate">{{ $contactName }}</h4>
+                                                <span class="text-[10px] text-slate-500 font-mono">{{ isset($c['updatedAt']) ? \Carbon\Carbon::parse($c['updatedAt'])->diffForHumans(null, true) : 'Baru' }}</span>
+                                            </div>
+                                            <p class="text-[11px] text-slate-400 truncate mt-0.5">{{ $lastMsg }}</p>
+                                            <div class="flex items-center gap-1.5 mt-1.5">
+                                                @if($mode === 'AGENT' || $mode === 'HUMAN')
+                                                    <span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Human Handover</span>
+                                                @else
+                                                    <span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">AI Bot</span>
+                                                @endif
+                                                <span class="px-1.5 py-0.2 rounded text-[9px] font-mono text-slate-400 bg-slate-800">{{ $contactPhone }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-12 px-4 text-slate-500 space-y-2">
+                                    <svg class="w-10 h-10 mx-auto text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                                    <p class="text-xs font-medium">Belum ada percakapan masuk</p>
+                                    <p class="text-[11px] text-slate-600">Pesan WhatsApp dari pelanggan akan muncul di sini secara otomatis.</p>
+                                </div>
+                            @endforelse
+                        </div>
+
+                    </div>
+
+                    <!-- Center & Right Columns: Chat Conversation Timeline -->
+                    <div class="md:col-span-8 lg:col-span-8 flex flex-col justify-between bg-slate-950/60 relative" id="inbox-timeline-pane">
+                        
+                        <!-- Empty Active State -->
+                        <div id="inbox-empty-view" class="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-3">
+                            <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shadow-lg">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                            </div>
+                            <h3 class="text-base font-bold text-slate-200">Pilih Percakapan untuk Memulai</h3>
+                            <p class="text-xs text-slate-400 max-w-sm">Pilih salah satu nomor pelanggan di panel kiri untuk melihat riwayat percakapan, mengambil alih ke agen manusia, atau mengirim balasan.</p>
+                        </div>
+
+                        <!-- Active Conversation Content (Hidden until conversation is selected) -->
+                        <div id="inbox-active-view" class="hidden flex-1 flex flex-col h-full">
+                            
+                            <!-- Header Toolbar -->
+                            <div class="p-3.5 px-5 border-b border-slate-800 flex items-center justify-between flex-wrap gap-2 bg-slate-900/70">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm border border-emerald-500/30 shrink-0" id="active-chat-avatar">
+                                        P
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <h4 class="text-sm font-bold text-slate-100" id="active-chat-name">Pelanggan</h4>
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" id="active-chat-mode-badge">AI Bot Aktif</span>
+                                        </div>
+                                        <div class="text-[11px] font-mono text-slate-400" id="active-chat-phone">-</div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="takeoverActiveChat()" id="btn-takeover" class="px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/30 transition-all flex items-center gap-1.5 cursor-pointer">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                        <span>Ambil Alih (Human Handover)</span>
+                                    </button>
+
+                                    <button type="button" onclick="returnActiveChatToBot()" id="btn-return-bot" class="hidden px-3 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 text-xs font-bold border border-purple-500/30 transition-all flex items-center gap-1.5 cursor-pointer">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                        <span>Kembalikan ke Bot</span>
+                                    </button>
+
+                                    <button type="button" onclick="resolveActiveChat()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 transition-all flex items-center gap-1.5 cursor-pointer">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                        <span>Selesai</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Timeline Messages Area -->
+                            <div class="flex-1 p-4 overflow-y-auto space-y-3 wa-bg-pattern min-h-[380px] max-h-[440px]" id="inbox-messages-timeline">
+                                <div class="text-center py-4">
+                                    <span class="px-3 py-1 rounded-full text-[10px] font-bold bg-slate-900/80 text-slate-400 border border-slate-800 shadow-sm">Hari Ini</span>
+                                </div>
+                                <div id="timeline-bubbles-container" class="space-y-3">
+                                    <!-- Dynamic bubbles injected here -->
+                                </div>
+                            </div>
+
+                            <!-- Quick Reply Shortcuts Bar -->
+                            <div class="px-4 py-2 border-t border-slate-800/80 bg-slate-900/60 flex items-center gap-2 overflow-x-auto no-scrollbar text-xs">
+                                <span class="text-[10px] text-slate-500 font-bold shrink-0">Balasan Cepat:</span>
+                                <button type="button" onclick="insertQuickMessage('Halo! Terima kasih telah menghubungi kami. Ada yang bisa kami bantu?')" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-[11px] whitespace-nowrap transition-colors">Halo &amp; Sapa</button>
+                                <button type="button" onclick="insertQuickMessage('Mohon tunggu sebentar, kami sedang memeriksa informasi Anda.')" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-[11px] whitespace-nowrap transition-colors">Mohon Tunggu</button>
+                                <button type="button" onclick="insertQuickMessage('Permintaan Anda telah selesai kami proses. Terima kasih.')" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-[11px] whitespace-nowrap transition-colors">Selesai Proses</button>
+                            </div>
+
+                            <!-- Reply Composer Box -->
+                            <form onsubmit="handleSendInboxReply(event)" class="p-3 border-t border-slate-800 bg-slate-900/90 flex items-end gap-2">
+                                <div class="flex-1 relative">
+                                    <textarea id="inbox-reply-input" rows="2" placeholder="Ketik balasan Anda ke pelanggan..." required class="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors resize-none"></textarea>
+                                </div>
+                                <button type="submit" id="btn-inbox-submit" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/30 transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
+                                    <span>Kirim</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                </button>
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- =============================================================== -->
         <!-- TAB 2: BOT & BYOK AI MANAGEMENT (BARU DI v1.2.2)               -->
         <!-- =============================================================== -->
         <div id="tab-byok-bot" class="tab-content hidden space-y-6">
@@ -567,6 +833,554 @@ WhatsApp::withBot('{{ $defaultBotKey ?? "wbk_live_sample_key" }}')
 // 2. Ambil daftar Bot yang tersedia di tenant Anda
 $bots = WhatsApp::getBots();</code></pre>
                         <button type="button" onclick="copySnippet('code-snippet-byok', 'Kode Disalin!')" class="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono transition-colors border border-slate-700">Salin Kode</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =============================================================== -->
+        <!-- TAB: KNOWLEDGE BASE MANAGEMENT                                  -->
+        <!-- =============================================================== -->
+        <div id="tab-knowledge" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl border-emerald-500/20">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                            </span>
+                            <h2 class="text-base sm:text-lg font-bold text-slate-100">Knowledge Base &amp; Sumber Pengetahuan AI</h2>
+                            <span class="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">RAG Ready</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Unggah dokumen SOP, FAQ, dan panduan layanan agar Bot AI dapat menjawab pertanyaan pelanggan secara akurat dan tergrounding.</p>
+                    </div>
+
+                    <button type="button" onclick="toggleKnowledgeUploadForm()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/30 transition-all flex items-center gap-2 cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        <span>Tambah Dokumen SOP / FAQ</span>
+                    </button>
+                </div>
+
+                <!-- Add Document Form (Collapsible) -->
+                @php
+                    $allKbs = $knowledgeBases['items'] ?? $knowledgeBases ?? [];
+                    $firstKbId = !empty($allKbs) ? ($allKbs[0]['id'] ?? 'default') : 'default';
+                @endphp
+                <div id="knowledge-upload-box" class="hidden rounded-2xl p-5 bg-slate-900/80 border border-slate-700/60 space-y-4">
+                    <h3 class="text-xs font-bold text-slate-200 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                        <span>Formulir Unggah Dokumen Baru</span>
+                    </h3>
+                    <form onsubmit="handleUploadKnowledgeDoc(event)" class="space-y-4">
+                        <input type="hidden" id="kb-id" value="{{ $firstKbId }}">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Judul Dokumen / SOP <span class="text-emerald-400">*</span></label>
+                                <input type="text" id="doc-title" placeholder="Contoh: SOP Pelayanan Perizinan &amp; Layanan Publik" required class="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">URL Rujukan / Sumber (Opsional)</label>
+                                <input type="url" id="doc-source" placeholder="https://portal.instansi.go.id/sop" class="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Isi Dokumen, Tanya Jawab FAQ, atau Panduan Lengkap <span class="text-emerald-400">*</span></label>
+                            <textarea id="doc-content" rows="6" placeholder="Tempelkan isi dokumen teks, daftar pertanyaan umum (FAQ), jadwal pelayanan, tarif, syarat pendaftaran, atau prosedur layanan..." required class="w-full px-3 py-2.5 text-xs rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"></textarea>
+                            <p class="text-[11px] text-slate-500 mt-1">Dokumen teks akan dipartisi (chunking) secara otomatis dan disimpan terisolasi untuk bot aplikasi Anda.</p>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-2 pt-2">
+                            <button type="button" onclick="toggleKnowledgeUploadForm()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-400 hover:text-slate-200 text-xs font-semibold">Batal</button>
+                            <button type="submit" id="btn-save-doc" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md shadow-emerald-600/30 flex items-center gap-2">
+                                <span>Simpan &amp; Indeks Sekarang</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Knowledge Documents Table -->
+                <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950/40">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-900/80 text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-800">
+                            <tr>
+                                <th class="py-3 px-4">Judul Dokumen</th>
+                                <th class="py-3 px-4">Sumber / Tipe</th>
+                                <th class="py-3 px-4">Karakter / Chunks</th>
+                                <th class="py-3 px-4">Status Indeks</th>
+                                <th class="py-3 px-4">Tanggal Diperbarui</th>
+                                <th class="py-3 px-4 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60" id="knowledge-docs-tbody">
+                            @php
+                                $kbList = $knowledgeBases['items'] ?? $knowledgeBases ?? [];
+                                $firstKb = !empty($kbList) ? $kbList[0] : null;
+                                $docs = $firstKb['documents'] ?? [];
+                            @endphp
+                            @forelse($docs as $doc)
+                                <tr class="hover:bg-slate-900/40 transition-colors">
+                                    <td class="py-3.5 px-4 font-bold text-slate-100 flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                        <span>{{ $doc['title'] ?? 'Dokumen Tanpa Judul' }}</span>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-slate-400 font-mono text-[11px]">{{ Str::limit($doc['sourceUrl'] ?? 'Teks Dokumen', 30) }}</td>
+                                    <td class="py-3.5 px-4 font-mono text-emerald-400">{{ number_format($doc['characterCount'] ?? strlen($doc['content'] ?? '')) }} Karakter</td>
+                                    <td class="py-3.5 px-4">
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                            Terindeks
+                                        </span>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-slate-500 font-mono text-[11px]">{{ isset($doc['updatedAt']) ? \Carbon\Carbon::parse($doc['updatedAt'])->format('d M Y, H:i') : '-' }}</td>
+                                    <td class="py-3.5 px-4 text-right">
+                                        <button type="button" onclick="deleteKnowledgeDoc('{{ $doc['id'] }}')" class="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 transition-colors" title="Hapus Dokumen">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="py-8 text-center text-slate-500">
+                                        <p class="text-xs font-semibold">Belum ada dokumen yang diunggah ke Knowledge Base.</p>
+                                        <p class="text-[11px] text-slate-600 mt-1">Klik tombol "Tambah Dokumen SOP / FAQ" di atas untuk menambahkan pengetahuan bot pertama Anda.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- =============================================================== -->
+        <!-- TAB: CHATBOT AUTOMATION FLOWS                                   -->
+        <!-- =============================================================== -->
+        <div id="tab-flows" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl border-purple-500/20">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="p-2 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+                            </span>
+                            <h2 class="text-base sm:text-lg font-bold text-slate-100">Alur Percakapan Otomatis (Chatbot Flows)</h2>
+                            <span class="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">Visual Routing</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Atur alur otomatisasi ketika pelanggan mengirimkan kata kunci spesifik (menu layanan, pendaftaran, eskalasi tiket).</p>
+                    </div>
+
+                    <button type="button" onclick="showCreateFlowModal()" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-lg shadow-purple-600/30 transition-all flex items-center gap-2 cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        <span>Buat Flow Percakapan Baru</span>
+                    </button>
+                </div>
+
+                <!-- Flows Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="flows-container">
+                    @forelse($flows['items'] ?? $flows ?? [] as $flow)
+                        <div class="rounded-2xl p-5 bg-slate-900/80 border border-slate-700/60 hover:border-purple-500/50 transition-all space-y-4">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <h3 class="text-sm font-bold text-slate-100">{{ $flow['name'] ?? 'Flow Percakapan' }}</h3>
+                                    <p class="text-[11px] text-slate-400 mt-0.5">{{ $flow['description'] ?? 'Alur otomatisasi respons pelanggan.' }}</p>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ ($flow['isActive'] ?? true) ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-slate-800 text-slate-400' }}">
+                                    {{ ($flow['isActive'] ?? true) ? 'Aktif' : 'Nonaktif' }}
+                                </span>
+                            </div>
+
+                            <!-- Flow Steps Diagram Pills -->
+                            <div class="space-y-2 pt-2 border-t border-slate-800 text-xs">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-1 rounded-lg bg-purple-500/10 text-purple-300 font-mono font-bold text-[10px] border border-purple-500/20">Trigger: {{ $flow['triggerValue'] ?? 'Kata Kunci' }}</span>
+                                    <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                    <span class="px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-300 font-bold text-[10px] border border-emerald-500/20">Respons AI / Menu</span>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <!-- Default Built-In Flows Cards -->
+                        <div class="rounded-2xl p-5 bg-slate-900/80 border border-slate-700/60 hover:border-purple-500/50 transition-all space-y-4">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <h3 class="text-sm font-bold text-slate-100">Menu Informasi &amp; Layanan Publik</h3>
+                                    <p class="text-[11px] text-slate-400 mt-0.5">Merespons saat pelanggan mengetik "info", "menu", atau "layanan".</p>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Aktif</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 flex-wrap text-[11px] pt-2 border-t border-slate-800">
+                                <span class="px-2 py-1 rounded-lg bg-purple-500/10 text-purple-300 font-mono text-[10px]">Keyword: "info"</span>
+                                <span class="text-slate-500">→</span>
+                                <span class="px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-300 text-[10px]">Kirim Menu Interaktif</span>
+                            </div>
+                        </div>
+
+                        <div class="rounded-2xl p-5 bg-slate-900/80 border border-slate-700/60 hover:border-amber-500/50 transition-all space-y-4">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <h3 class="text-sm font-bold text-slate-100">Eskalasi ke Customer Service (Handover)</h3>
+                                    <p class="text-[11px] text-slate-400 mt-0.5">Deteksi kata "admin", "cs", "operator", atau "bantuan".</p>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Aktif</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 flex-wrap text-[11px] pt-2 border-t border-slate-800">
+                                <span class="px-2 py-1 rounded-lg bg-amber-500/10 text-amber-300 font-mono text-[10px]">Keyword: "admin"</span>
+                                <span class="text-slate-500">→</span>
+                                <span class="px-2 py-1 rounded-lg bg-amber-500/10 text-amber-300 text-[10px]">Alihkan ke Agen CS</span>
+                            </div>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
+        <!-- =============================================================== -->
+        <!-- TAB: AI CS PLAYGROUND (TESTING SANDBOX)                         -->
+        <!-- =============================================================== -->
+        <div id="tab-playground" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl border-emerald-500/20">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </span>
+                            <h2 class="text-base sm:text-lg font-bold text-slate-100">AI Customer Service Playground (Sandbox)</h2>
+                            <span class="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Sandbox Simulasi</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Uji coba simulasi respons bot AI, inspeksi kutipan Knowledge Base (grounding), dan latensi sebelum diaktifkan secara live ke pelanggan.</p>
+                    </div>
+
+                    <button type="button" onclick="resetPlaygroundChat()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        <span>Reset Simulasi</span>
+                    </button>
+                </div>
+
+                <!-- Playground Interface: 2 Columns -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    
+                    <!-- Left: Playground Sandbox Chat (7 cols) -->
+                    <div class="lg:col-span-7 flex flex-col rounded-2xl border border-slate-800 bg-slate-950/80 overflow-hidden shadow-md">
+                        <!-- Chat Header -->
+                        <div class="p-3.5 px-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs border border-emerald-500/30">
+                                    AI
+                                </div>
+                                <div>
+                                    <div class="text-xs font-bold text-slate-100">Simulasi Bot WhatsApp</div>
+                                    <div class="text-[10px] text-emerald-400 flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                        Siap merespons pertanyaan
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-500">Isolasi Sandbox</span>
+                        </div>
+
+                        <!-- Chat Messages Scroll Area -->
+                        <div class="p-4 space-y-3 min-h-[320px] max-h-[380px] overflow-y-auto wa-bg-pattern" id="playground-chat-bubbles">
+                            <!-- Bot Welcome Bubble -->
+                            <div class="flex items-start gap-2 max-w-[85%]">
+                                <div class="p-3 rounded-2xl bg-slate-800 text-slate-200 text-xs shadow-sm space-y-1">
+                                    <p>Halo! Saya adalah Customer Service Virtual Anda. Silakan ajukan pertanyaan simulasi untuk menguji pemahaman bot dan rujukan Knowledge Base.</p>
+                                    <span class="text-[9px] text-slate-500 font-mono block text-right">Otomatis</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chat Composer Input -->
+                        <form onsubmit="handlePlaygroundSend(event)" class="p-3 border-t border-slate-800 bg-slate-900/90 flex items-center gap-2">
+                            <input type="text" id="playground-prompt-input" placeholder="Ketik pertanyaan pengujian (contoh: Bagaimana cara mengurus surat izin?)..." required class="flex-1 px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+                            <button type="submit" id="btn-playground-submit" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md shadow-emerald-600/30 flex items-center gap-1.5 cursor-pointer">
+                                <span>Kirim</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Right: Grounding Inspector & Diagnostics (5 cols) -->
+                    <div class="lg:col-span-5 rounded-2xl p-5 bg-slate-900/80 border border-slate-700/60 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xs font-bold text-slate-200 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                                <span>Inspektur Grounding &amp; Latensi</span>
+                            </h3>
+                            <span class="text-[10px] font-mono text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/20">RAG Diagnostic</span>
+                        </div>
+
+                        <!-- Metrics Grid -->
+                        <div class="grid grid-cols-2 gap-3 text-xs">
+                            <div class="p-3 rounded-xl bg-slate-950/70 border border-slate-800">
+                                <div class="text-[10px] text-slate-400">Latensi Respons</div>
+                                <div class="text-base font-bold text-emerald-400 font-mono mt-0.5" id="inspect-latency">- ms</div>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-950/70 border border-slate-800">
+                                <div class="text-[10px] text-slate-400">Token Digunakan</div>
+                                <div class="text-base font-bold text-slate-100 font-mono mt-0.5" id="inspect-tokens">-</div>
+                            </div>
+                        </div>
+
+                        <!-- Retrieved Chunks Box -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-semibold text-slate-300">Potongan Referensi Knowledge Base Terpilih:</label>
+                            <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px] text-slate-400 font-mono min-h-[140px] max-h-[180px] overflow-y-auto leading-relaxed" id="inspect-chunks">
+                                Belum ada interaksi pengujian. Ajukan pertanyaan di panel kiri untuk melihat kutipan dokumen rujukan.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- =============================================================== -->
+        <!-- TAB: WHATSAPP BROADCAST & CAMPAIGNS                             -->
+        <!-- =============================================================== -->
+        <div id="tab-broadcast" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl border-emerald-500/20">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+                            </span>
+                            <h2 class="text-base sm:text-lg font-bold text-slate-100">WhatsApp Broadcast &amp; Pengiriman Massal</h2>
+                            <span class="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Anti-Spam Throttled</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Kirimkan pesan pengumuman resmi, sosialisasi program, atau notifikasi ke daftar nomor WhatsApp secara teratur dan terjadwal.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    
+                    <!-- Wizard Form (5 cols) -->
+                    <div class="lg:col-span-5 rounded-2xl p-5 bg-slate-900/80 border border-slate-700/60 space-y-4">
+                        <h3 class="text-xs font-bold text-slate-200 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span>Formulir Buat Kampanye Baru</span>
+                        </h3>
+                        <form onsubmit="handleCreateBroadcast(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Kampanye <span class="text-emerald-400">*</span></label>
+                                <input type="text" id="bc-name" placeholder="Contoh: Sosialisasi Layanan Digital 2026" required class="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Target Nomor Penerima <span class="text-emerald-400">*</span></label>
+                                <textarea id="bc-recipients" rows="4" placeholder="081234567890&#10;085298765432&#10;628112233445" required class="w-full px-3 py-2 text-xs font-mono rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"></textarea>
+                                <p class="text-[10px] text-slate-500 mt-1">Satu nomor WhatsApp per baris atau dipisahkan tanda koma.</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Pesan Broadcast <span class="text-emerald-400">*</span></label>
+                                <textarea id="bc-content" rows="4" placeholder="Yth. Bapak/Ibu {nama}, kami menginformasikan bahwa..." required class="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Jeda Pengiriman (Throttle Delay)</label>
+                                <select id="bc-delay" class="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-700 text-slate-100 focus:outline-none focus:border-emerald-500">
+                                    <option value="2000">2 Detik / Pesan (Standar)</option>
+                                    <option value="4000">4 Detik / Pesan (Aman untuk daftar > 100)</option>
+                                    <option value="1000">1 Detik / Pesan (Cepat)</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" id="btn-submit-bc" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                <span>Mulai Kirim Kampanye</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Campaigns Table (7 cols) -->
+                    <div class="lg:col-span-7 rounded-2xl border border-slate-800 bg-slate-950/60 overflow-hidden shadow-md">
+                        <div class="p-3.5 px-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
+                            <h3 class="text-xs font-bold text-slate-200">Riwayat Kampanye Broadcast</h3>
+                            <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">{{ count($broadcasts['items'] ?? $broadcasts ?? []) }} Kampanye</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs text-slate-300">
+                                <thead class="bg-slate-900/40 text-[10px] uppercase text-slate-400 border-b border-slate-800">
+                                    <tr>
+                                        <th class="py-2.5 px-3">Nama Kampanye</th>
+                                        <th class="py-2.5 px-3">Penerima</th>
+                                        <th class="py-2.5 px-3">Status</th>
+                                        <th class="py-2.5 px-3">Waktu</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800/60">
+                                    @forelse($broadcasts['items'] ?? $broadcasts ?? [] as $bc)
+                                        <tr>
+                                            <td class="py-3 px-3 font-bold text-slate-100">{{ $bc['name'] ?? 'Broadcast' }}</td>
+                                            <td class="py-3 px-3 font-mono text-emerald-400">{{ $bc['totalRecipients'] ?? 0 }} Nomor</td>
+                                            <td class="py-3 px-3">
+                                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                                    {{ $bc['status'] ?? 'COMPLETED' }}
+                                                </span>
+                                            </td>
+                                            <td class="py-3 px-3 text-slate-500 font-mono text-[10px]">{{ isset($bc['createdAt']) ? \Carbon\Carbon::parse($bc['createdAt'])->format('d/m/Y H:i') : '-' }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="py-8 text-center text-slate-500">
+                                                <p class="text-xs">Belum ada riwayat broadcast yang dikirim.</p>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- =============================================================== -->
+        <!-- TAB: TIM & BEBAN OPERATOR                                       -->
+        <!-- =============================================================== -->
+        <div id="tab-teams" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl border-emerald-500/20">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                            </span>
+                            <h2 class="text-base sm:text-lg font-bold text-slate-100">Tim &amp; Beban Kapasitas Operator</h2>
+                            <span class="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Workload SLA</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Pantau ketersediaan agen CS, beban antrean aktif, dan SLA kecepatan balasan pertama (First Response Time).</p>
+                    </div>
+                </div>
+
+                <!-- Operator Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="rounded-2xl p-5 bg-slate-900/80 border border-slate-700/60 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 flex items-center justify-center font-bold text-sm">
+                                    {{ strtoupper(substr($currentUser['name'] ?? 'A', 0, 1)) }}
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-100">{{ $currentUser['name'] ?? 'Petugas CS' }}</h4>
+                                    <span class="text-[10px] text-slate-400 font-mono">{{ $currentUser['email'] ?? 'admin@domain.id' }}</span>
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Online
+                            </span>
+                        </div>
+
+                        <div class="space-y-1.5 pt-2 border-t border-slate-800">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-slate-400">Beban Chat Aktif</span>
+                                <span class="font-mono font-bold text-emerald-400">2 / 10 Chat</span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-emerald-500 h-1.5 rounded-full" style="width: 20%"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+                            <span>SLA Response: <strong class="text-slate-200">1.2 Menit</strong></span>
+                            <span class="text-emerald-400 font-bold">Kapasitas Aman</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =============================================================== -->
+        <!-- TAB: ATURAN OTOMASI & JAM KERJA                                 -->
+        <!-- =============================================================== -->
+        <div id="tab-automations" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl border-emerald-500/20">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </span>
+                            <h2 class="text-base sm:text-lg font-bold text-slate-100">Aturan Jam Kerja &amp; Penjawab Otomatis</h2>
+                            <span class="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Auto Responder</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Konfigurasikan jam operasional kantor dan pesan balasan instan saat pesan masuk di luar jam layanan.</p>
+                    </div>
+                </div>
+
+                <form onsubmit="handleSaveBusinessHours(event)" class="rounded-2xl p-5 bg-slate-900/80 border border-slate-700/60 space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Jam Buka Layanan (Senin - Jumat)</label>
+                            <input type="time" id="bh-open" value="08:00" class="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-700 text-slate-100 focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Jam Tutup Layanan (Senin - Jumat)</label>
+                            <input type="time" id="bh-close" value="16:00" class="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-700 text-slate-100 focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Pesan Balasan Di Luar Jam Kerja (After-Hours Auto-Responder)</label>
+                        <textarea id="bh-message" rows="3" class="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-700 text-slate-100 focus:outline-none focus:border-emerald-500">Terima kasih telah menghubungi kami. Saat ini layanan customer service sedang berada di luar jam operasional (08:00 - 16:00 WIB). Pesan Anda telah kami catat dan akan kami respons pada jam kerja berikutnya.</textarea>
+                    </div>
+
+                    <div class="flex items-center justify-end">
+                        <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md shadow-emerald-600/30 flex items-center gap-2 cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span>Simpan Aturan Jam Kerja</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- =============================================================== -->
+        <!-- TAB: BIAYA & TOKEN AI                                           -->
+        <!-- =============================================================== -->
+        <div id="tab-usage" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl border-emerald-500/20">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                            </span>
+                            <h2 class="text-base sm:text-lg font-bold text-slate-100">Biaya &amp; Penggunaan Token AI</h2>
+                            <span class="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">BYOK Transparency</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Transparansi penuh konsumsi token dan estimasi biaya penyedia AI (OpenRouter / OpenAI / Gemini).</p>
+                    </div>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="rounded-2xl p-4 bg-slate-900/80 border border-slate-700/60 space-y-1">
+                        <span class="text-xs text-slate-400">Total Permintaan AI</span>
+                        <div class="text-2xl font-black text-slate-100 font-mono">{{ number_format($usageSummary['totalCalls'] ?? 0) }}</div>
+                        <span class="text-[10px] text-emerald-400">Panggilan AI Sukses</span>
+                    </div>
+
+                    <div class="rounded-2xl p-4 bg-slate-900/80 border border-slate-700/60 space-y-1">
+                        <span class="text-xs text-slate-400">Total Token Digunakan</span>
+                        <div class="text-2xl font-black text-emerald-400 font-mono">{{ number_format($usageSummary['totalTokens'] ?? 0) }}</div>
+                        <span class="text-[10px] text-slate-500 font-mono">Prompt + Completion</span>
+                    </div>
+
+                    <div class="rounded-2xl p-4 bg-slate-900/80 border border-slate-700/60 space-y-1">
+                        <span class="text-xs text-slate-400">Estimasi Biaya USD</span>
+                        <div class="text-2xl font-black text-amber-400 font-mono">${{ number_format($usageSummary['estimatedCostUsd'] ?? 0, 4) }}</div>
+                        <span class="text-[10px] text-slate-500">Berdasarkan tarif token</span>
+                    </div>
+
+                    <div class="rounded-2xl p-4 bg-slate-900/80 border border-slate-700/60 space-y-1">
+                        <span class="text-xs text-slate-400">Estimasi Rupiah</span>
+                        <div class="text-2xl font-black text-slate-100 font-mono">Rp {{ number_format(($usageSummary['estimatedCostUsd'] ?? 0) * 16300) }}</div>
+                        <span class="text-[10px] text-emerald-400">Kurs Rp 16.300/USD</span>
                     </div>
                 </div>
             </div>
@@ -799,9 +1613,9 @@ $bots = WhatsApp::getBots();</code></pre>
         </div>
 
         <!-- =============================================================== -->
-        <!-- TAB 5: INTEGRASI MULTI-FRAMEWORK HUB (7 STACKS)                 -->
+        <!-- TAB 6: INTEGRASI MULTI-FRAMEWORK & LIFE CYCLE                   -->
         <!-- =============================================================== -->
-        <div id="tab-api-guide" class="tab-content hidden space-y-6">
+        <div id="tab-lifecycle" class="tab-content hidden space-y-6">
             <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
                 <div>
                     <h2 class="text-base sm:text-lg font-bold text-slate-100">Panduan Integrasi Kode Multi-Stack (7 Frameworks)</h2>
@@ -827,12 +1641,6 @@ $bots = WhatsApp::getBots();</code></pre>
                     </button>
                 </div>
             </div>
-        </div>
-
-        <!-- =============================================================== -->
-        <!-- TAB 6: KONFIGURASI, HAK AKSES & LIFE CYCLE                      -->
-        <!-- =============================================================== -->
-        <div id="tab-lifecycle" class="tab-content hidden space-y-6">
             <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-8 shadow-xl">
                 <div>
                     <h2 class="text-base sm:text-lg font-bold text-slate-100">Hak Akses, Batasan Sesi &amp; Manajemen Paket</h2>
@@ -889,7 +1697,7 @@ composer remove xdiego1st/wa-integration</code></pre>
 
     <!-- Footer -->
     <footer class="glass-header py-5 text-center text-xs text-slate-500 mt-auto border-t border-slate-800">
-        &copy; {{ date('Y') }} PlatformCore WhatsApp Gateway (Waku Dashboard v1.2.2). Dilindungi Hak Cipta.
+        &copy; {{ date('Y') }} PlatformCore WhatsApp Gateway (Waku Dashboard v1.2.3). Dilindungi Hak Cipta.
     </footer>
 
     <!-- =============================================================== -->
@@ -1605,6 +2413,647 @@ curl -X POST "{{ $config["baseUrl"] }}/messages" \\
                 const text = row.innerText.toLowerCase();
                 row.style.display = text.includes(query) ? '' : 'none';
             });
+        }
+
+        // ===============================================================
+        // LIVE CHAT INBOX & HUMAN HANDOVER LOGIC
+        // ===============================================================
+        let activeConversationId = null;
+        let activeConversationMode = 'AI';
+        let activeConversationStatus = 'OPEN';
+
+        function filterInboxConversations() {
+            const query = (document.getElementById('inbox-search')?.value || '').toLowerCase();
+            const items = document.querySelectorAll('.inbox-item');
+            items.forEach(item => {
+                const name = (item.getAttribute('data-name') || '').toLowerCase();
+                const phone = (item.getAttribute('data-phone') || '').toLowerCase();
+                item.style.display = (name.includes(query) || phone.includes(query)) ? '' : 'none';
+            });
+        }
+
+        function setInboxFilter(filter) {
+            document.querySelectorAll('.inbox-filter-btn').forEach(btn => {
+                btn.className = 'inbox-filter-btn px-2.5 py-1 rounded-lg bg-slate-800/80 text-slate-400 font-medium hover:text-slate-200 whitespace-nowrap';
+            });
+            if (window.event?.currentTarget) {
+                window.event.currentTarget.className = 'inbox-filter-btn px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 whitespace-nowrap';
+            }
+
+            const items = document.querySelectorAll('.inbox-item');
+            items.forEach(item => {
+                const mode = item.getAttribute('data-mode');
+                const status = item.getAttribute('data-status');
+                if (filter === 'all') {
+                    item.style.display = '';
+                } else if (filter === 'AI') {
+                    item.style.display = (mode !== 'AGENT' && mode !== 'HUMAN') ? '' : 'none';
+                } else if (filter === 'AGENT') {
+                    item.style.display = (mode === 'AGENT' || mode === 'HUMAN') ? '' : 'none';
+                } else if (filter === 'RESOLVED') {
+                    item.style.display = (status === 'RESOLVED') ? '' : 'none';
+                }
+            });
+        }
+
+        async function selectConversation(id, name, phone, mode, status) {
+            activeConversationId = id;
+            activeConversationMode = mode;
+            activeConversationStatus = status;
+
+            // Visual highlight active item
+            document.querySelectorAll('.inbox-item').forEach(el => {
+                el.classList.remove('bg-slate-800/90', 'border-emerald-500/50');
+            });
+            const activeEl = document.querySelector(`.inbox-item[data-id="${id}"]`);
+            if (activeEl) {
+                activeEl.classList.add('bg-slate-800/90', 'border-emerald-500/50');
+            }
+
+            // Show active pane, hide placeholder
+            document.getElementById('inbox-empty-view')?.classList.add('hidden');
+            document.getElementById('inbox-active-view')?.classList.remove('hidden');
+
+            // Update chat header info
+            const avatarEl = document.getElementById('active-chat-avatar');
+            if (avatarEl) avatarEl.innerText = (name || 'P').charAt(0).toUpperCase();
+
+            const nameEl = document.getElementById('active-chat-name');
+            if (nameEl) nameEl.innerText = name || 'Pelanggan';
+
+            const phoneEl = document.getElementById('active-chat-phone');
+            if (phoneEl) phoneEl.innerText = phone || '-';
+
+            const badgeEl = document.getElementById('active-chat-mode-badge');
+            const btnTakeover = document.getElementById('btn-takeover');
+            const btnReturnBot = document.getElementById('btn-return-bot');
+
+            if (mode === 'AGENT' || mode === 'HUMAN') {
+                if (badgeEl) {
+                    badgeEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
+                    badgeEl.innerText = 'Human Handover';
+                }
+                btnTakeover?.classList.add('hidden');
+                btnReturnBot?.classList.remove('hidden');
+            } else {
+                if (badgeEl) {
+                    badgeEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+                    badgeEl.innerText = 'AI Bot Aktif';
+                }
+                btnTakeover?.classList.remove('hidden');
+                btnReturnBot?.classList.add('hidden');
+            }
+
+            // Fetch conversation messages
+            const container = document.getElementById('timeline-bubbles-container');
+            if (container) {
+                container.innerHTML = `
+                    <div class="py-8 text-center text-xs text-slate-500 flex flex-col items-center gap-2">
+                        <svg class="animate-spin w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <span>Memuat linimasa obrolan...</span>
+                    </div>
+                `;
+            }
+
+            try {
+                const res = await fetch("{{ url($config['dashboardUrl']) }}/conversations/" + encodeURIComponent(id));
+                const json = await res.json();
+                const messages = json.data?.messages || json.messages || [];
+                renderTimelineMessages(messages);
+            } catch (err) {
+                if (container) {
+                    container.innerHTML = `
+                        <div class="p-4 rounded-xl bg-rose-950/40 border border-rose-800/40 text-center text-xs text-rose-300">
+                            Gagal memuat pesan obrolan: ${escapeHtml(err.message)}
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function renderTimelineMessages(messages) {
+            const container = document.getElementById('timeline-bubbles-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (!messages || messages.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-6 text-slate-500 text-xs">
+                        Belum ada riwayat pesan dalam percakapan ini.
+                    </div>
+                `;
+                return;
+            }
+
+            messages.forEach(msg => {
+                const isIncoming = msg.direction === 'INBOUND' || msg.senderType === 'CUSTOMER' || msg.fromMe === false;
+                const time = msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+                const bubble = document.createElement('div');
+
+                if (isIncoming) {
+                    bubble.className = 'flex items-start gap-2 max-w-[85%]';
+                    bubble.innerHTML = `
+                        <div class="p-3 rounded-2xl rounded-tl-none bg-slate-800 text-slate-100 text-xs shadow-sm space-y-1">
+                            <p class="leading-relaxed whitespace-pre-line">${escapeHtml(msg.content || '')}</p>
+                            <span class="text-[9px] text-slate-400 font-mono block text-right">${time}</span>
+                        </div>
+                    `;
+                } else {
+                    bubble.className = 'flex items-start justify-end gap-2 max-w-[85%] ml-auto';
+                    bubble.innerHTML = `
+                        <div class="p-3 rounded-2xl rounded-tr-none bg-emerald-700/80 text-white text-xs shadow-sm space-y-1">
+                            <p class="leading-relaxed whitespace-pre-line">${escapeHtml(msg.content || '')}</p>
+                            <div class="flex items-center justify-end gap-1 text-[9px] text-emerald-200">
+                                <span>${time}</span>
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                        </div>
+                    `;
+                }
+                container.appendChild(bubble);
+            });
+
+            const scrollArea = document.getElementById('inbox-messages-timeline');
+            if (scrollArea) scrollArea.scrollTop = scrollArea.scrollHeight;
+        }
+
+        function insertQuickMessage(text) {
+            const input = document.getElementById('inbox-reply-input');
+            if (input) {
+                input.value = text;
+                input.focus();
+            }
+        }
+
+        async function handleSendInboxReply(e) {
+            e.preventDefault();
+            if (!activeConversationId) {
+                showToast('Pilih percakapan terlebih dahulu!');
+                return;
+            }
+
+            const input = document.getElementById('inbox-reply-input');
+            const content = (input?.value || '').trim();
+            if (!content) return;
+
+            // Optimistic bubble append
+            const container = document.getElementById('timeline-bubbles-container');
+            const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const bubble = document.createElement('div');
+            bubble.className = 'flex items-start justify-end gap-2 max-w-[85%] ml-auto';
+            bubble.innerHTML = `
+                <div class="p-3 rounded-2xl rounded-tr-none bg-emerald-700/80 text-white text-xs shadow-sm space-y-1">
+                    <p class="leading-relaxed whitespace-pre-line">${escapeHtml(content)}</p>
+                    <div class="flex items-center justify-end gap-1 text-[9px] text-emerald-200">
+                        <span>${now}</span>
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                </div>
+            `;
+            container?.appendChild(bubble);
+            input.value = '';
+
+            const scrollArea = document.getElementById('inbox-messages-timeline');
+            if (scrollArea) scrollArea.scrollTop = scrollArea.scrollHeight;
+
+            try {
+                const res = await fetch("{{ url($config['dashboardUrl']) }}/conversations/" + encodeURIComponent(activeConversationId) + "/reply", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
+                    body: JSON.stringify({ content })
+                });
+                const json = await res.json();
+                if (json.success === false) {
+                    showToast('Gagal mengirim: ' + (json.error || 'Terjadi kesalahan'));
+                }
+            } catch (err) {
+                showToast('Error: ' + err.message);
+            }
+        }
+
+        async function takeoverActiveChat() {
+            if (!activeConversationId) return;
+            try {
+                const res = await fetch("{{ url($config['dashboardUrl']) }}/conversations/" + encodeURIComponent(activeConversationId) + "/takeover", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+                });
+                const json = await res.json();
+                if (json.success !== false) {
+                    showToast('Percakapan diambil alih ke Agen Manusia');
+                    document.getElementById('btn-takeover')?.classList.add('hidden');
+                    document.getElementById('btn-return-bot')?.classList.remove('hidden');
+                    const badge = document.getElementById('active-chat-mode-badge');
+                    if (badge) {
+                        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
+                        badge.innerText = 'Human Handover';
+                    }
+                }
+            } catch (err) {
+                Swal.fire('Error', err.message, 'error');
+            }
+        }
+
+        async function returnActiveChatToBot() {
+            if (!activeConversationId) return;
+            try {
+                const res = await fetch("{{ url($config['dashboardUrl']) }}/conversations/" + encodeURIComponent(activeConversationId) + "/return-to-bot", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+                });
+                const json = await res.json();
+                if (json.success !== false) {
+                    showToast('Percakapan dikembalikan ke AI Bot');
+                    document.getElementById('btn-return-bot')?.classList.add('hidden');
+                    document.getElementById('btn-takeover')?.classList.remove('hidden');
+                    const badge = document.getElementById('active-chat-mode-badge');
+                    if (badge) {
+                        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+                        badge.innerText = 'AI Bot Aktif';
+                    }
+                }
+            } catch (err) {
+                Swal.fire('Error', err.message, 'error');
+            }
+        }
+
+        async function resolveActiveChat() {
+            if (!activeConversationId) return;
+            const result = await Swal.fire({
+                title: 'Tandai Selesai?',
+                text: 'Percakapan akan diselesaikan dan diarsipkan statusnya.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Ya, Tandai Selesai',
+                cancelButtonText: 'Batal'
+            });
+            if (!result.isConfirmed) return;
+
+            try {
+                const res = await fetch("{{ url($config['dashboardUrl']) }}/conversations/" + encodeURIComponent(activeConversationId) + "/resolve", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+                });
+                const json = await res.json();
+                if (json.success !== false) {
+                    showToast('Percakapan berhasil diselesaikan');
+                    const badge = document.getElementById('active-chat-mode-badge');
+                    if (badge) {
+                        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-700 text-slate-300 border border-slate-600';
+                        badge.innerText = 'Selesai (Resolved)';
+                    }
+                }
+            } catch (err) {
+                Swal.fire('Error', err.message, 'error');
+            }
+        }
+
+        // ===============================================================
+        // KNOWLEDGE BASE LOGIC
+        // ===============================================================
+        function toggleKnowledgeUploadForm() {
+            const el = document.getElementById('knowledge-upload-box');
+            if (el) el.classList.toggle('hidden');
+        }
+
+        async function handleUploadKnowledgeDoc(e) {
+            e.preventDefault();
+            const kbId = document.getElementById('kb-id')?.value || 'default';
+            const title = document.getElementById('doc-title')?.value;
+            const content = document.getElementById('doc-content')?.value;
+            const sourceUrl = document.getElementById('doc-source')?.value || null;
+
+            if (!title || !content) {
+                Swal.fire('Form Belum Lengkap', 'Judul dan isi materi SOP wajib diisi.', 'warning');
+                return;
+            }
+
+            Swal.fire({
+                title: 'Mengindeks Dokumen...',
+                text: 'Memproses teks ke dalam basis pengetahuan RAG AI...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            try {
+                const res = await fetch("{{ url($config['dashboardUrl']) }}/knowledge/" + encodeURIComponent(kbId) + "/documents", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
+                    body: JSON.stringify({ title, content, contentType: 'text/plain', sourceUrl })
+                });
+                const json = await res.json();
+                if (json.success !== false) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Dokumen Terindeks!',
+                        text: `Dokumen "${title}" telah berhasil diindeks ke Knowledge Base AI.`,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    location.reload();
+                } else {
+                    Swal.fire('Gagal Mengindeks', json.error || 'Terjadi kesalahan.', 'error');
+                }
+            } catch (err) {
+                Swal.fire('Error', err.message, 'error');
+            }
+        }
+
+        async function deleteKnowledgeDoc(docId) {
+            const result = await Swal.fire({
+                title: 'Hapus Dokumen SOP?',
+                text: 'Dokumen ini akan dihapus dari indeks AI Customer Service.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Ya, Hapus Dokumen',
+                cancelButtonText: 'Batal'
+            });
+            if (!result.isConfirmed) return;
+
+            try {
+                const res = await fetch("{{ url($config['dashboardUrl']) }}/knowledge/documents/" + encodeURIComponent(docId) + "/delete", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+                });
+                const json = await res.json();
+                if (json.success !== false) {
+                    showToast('Dokumen berhasil dihapus');
+                    location.reload();
+                } else {
+                    Swal.fire('Gagal', json.error || 'Gagal menghapus dokumen', 'error');
+                }
+            } catch (err) {
+                Swal.fire('Error', err.message, 'error');
+            }
+        }
+
+        // ===============================================================
+        // CHATBOT FLOWS LOGIC
+        // ===============================================================
+        async function showCreateFlowModal() {
+            const { value: formValues } = await Swal.fire({
+                title: 'Buat Alur Percakapan Baru',
+                html: `
+                    <div class="space-y-3 text-left">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Nama Flow</label>
+                            <input id="swal-flow-name" class="w-full px-3 py-2 text-xs rounded-xl bg-slate-900 border border-slate-700 text-slate-100" placeholder="Contoh: Pendaftaran Layanan">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Kata Kunci Pemicu (Koma dipisah)</label>
+                            <input id="swal-flow-trigger" class="w-full px-3 py-2 text-xs rounded-xl bg-slate-900 border border-slate-700 text-slate-100" placeholder="daftar, registrasi, formulir">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Pesan Balasan Otomatis</label>
+                            <textarea id="swal-flow-reply" rows="3" class="w-full px-3 py-2 text-xs rounded-xl bg-slate-900 border border-slate-700 text-slate-100" placeholder="Ketik isi balasan WhatsApp..."></textarea>
+                        </div>
+                    </div>
+                `,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: 'Simpan Alur',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#9333ea',
+                preConfirm: () => {
+                    const name = document.getElementById('swal-flow-name').value;
+                    const trigger = document.getElementById('swal-flow-trigger').value;
+                    const reply = document.getElementById('swal-flow-reply').value;
+                    if (!name || !trigger || !reply) {
+                        Swal.showValidationMessage('Semua bidang wajib diisi!');
+                    }
+                    return { name, trigger, reply };
+                }
+            });
+
+            if (formValues) {
+                try {
+                    const res = await fetch("{{ url($config['dashboardUrl']) }}/flows", {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
+                        body: JSON.stringify({
+                            name: formValues.name,
+                            triggerValue: formValues.trigger,
+                            responseMessage: formValues.reply,
+                            isActive: true
+                        })
+                    });
+                    const json = await res.json();
+                    if (json.success !== false) {
+                        await Swal.fire('Tersimpan', 'Alur percakapan baru berhasil dibuat.', 'success');
+                        location.reload();
+                    } else {
+                        Swal.fire('Gagal', json.error || 'Gagal menyimpan flow.', 'error');
+                    }
+                } catch (err) {
+                    Swal.fire('Error', err.message, 'error');
+                }
+            }
+        }
+
+        // ===============================================================
+        // AI CS PLAYGROUND SIMULATION LOGIC
+        // ===============================================================
+        function resetPlaygroundChat() {
+            const container = document.getElementById('playground-chat-bubbles');
+            if (container) {
+                container.innerHTML = `
+                    <div class="flex items-start gap-2 max-w-[85%]">
+                        <div class="p-3 rounded-2xl bg-slate-800 text-slate-200 text-xs shadow-sm space-y-1">
+                            <p>Halo! Saya adalah Customer Service Virtual Anda. Silakan ajukan pertanyaan simulasi untuk menguji pemahaman bot dan rujukan Knowledge Base.</p>
+                            <span class="text-[9px] text-slate-500 font-mono block text-right">Otomatis</span>
+                        </div>
+                    </div>
+                `;
+            }
+            const latencyEl = document.getElementById('inspect-latency');
+            if (latencyEl) latencyEl.innerText = '- ms';
+            const tokensEl = document.getElementById('inspect-tokens');
+            if (tokensEl) tokensEl.innerText = '-';
+            const chunksEl = document.getElementById('inspect-chunks');
+            if (chunksEl) chunksEl.innerText = 'Belum ada interaksi pengujian. Ajukan pertanyaan di panel kiri untuk melihat kutipan dokumen rujukan.';
+        }
+
+        async function handlePlaygroundSend(e) {
+            e.preventDefault();
+            const input = document.getElementById('playground-prompt-input');
+            const prompt = (input?.value || '').trim();
+            if (!prompt) return;
+
+            const container = document.getElementById('playground-chat-bubbles');
+
+            // Append User Bubble
+            const userBubble = document.createElement('div');
+            userBubble.className = 'flex items-start justify-end gap-2 max-w-[85%] ml-auto';
+            userBubble.innerHTML = `
+                <div class="p-3 rounded-2xl rounded-tr-none bg-emerald-700/80 text-white text-xs shadow-sm space-y-1">
+                    <p class="leading-relaxed whitespace-pre-line">${escapeHtml(prompt)}</p>
+                    <span class="text-[9px] text-emerald-200 font-mono block text-right">Anda (Penguji)</span>
+                </div>
+            `;
+            container?.appendChild(userBubble);
+            input.value = '';
+
+            // Append Typing Indicator
+            const typingBubble = document.createElement('div');
+            typingBubble.id = 'pg-typing-indicator';
+            typingBubble.className = 'flex items-start gap-2 max-w-[85%]';
+            typingBubble.innerHTML = `
+                <div class="p-3 rounded-2xl bg-slate-800 text-slate-400 text-xs shadow-sm flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-bounce"></span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style="animation-delay: 0.15s"></span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style="animation-delay: 0.3s"></span>
+                    <span class="text-[11px] font-medium text-slate-300">AI CS sedang memproses &amp; mencari Knowledge Base...</span>
+                </div>
+            `;
+            container?.appendChild(typingBubble);
+            if (container) container.scrollTop = container.scrollHeight;
+
+            const startTime = performance.now();
+
+            try {
+                const res = await fetch("{{ url($config['dashboardUrl']) }}/ai/playground/chat", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
+                    body: JSON.stringify({ message: prompt })
+                });
+                const elapsed = Math.round(performance.now() - startTime);
+                const json = await res.json();
+                typingBubble.remove();
+
+                const botReply = json.data?.reply || json.reply || json.data?.content || json.content || 'Terima kasih atas pertanyaan Anda.';
+                const tokensUsed = json.data?.tokensUsed || json.tokensUsed || Math.round((prompt.length + botReply.length) / 4);
+
+                // Update Grounding Inspector
+                const latencyEl = document.getElementById('inspect-latency');
+                if (latencyEl) latencyEl.innerText = elapsed + ' ms';
+                const tokensEl = document.getElementById('inspect-tokens');
+                if (tokensEl) tokensEl.innerText = tokensUsed + ' Token';
+                const chunksEl = document.getElementById('inspect-chunks');
+                if (chunksEl) {
+                    const citations = json.data?.citations || json.citations || [];
+                    if (citations.length > 0) {
+                        chunksEl.innerHTML = citations.map((c, i) => `<div class="p-1.5 rounded bg-slate-900 border border-slate-800 mb-1"><span class="text-emerald-400 font-bold">[Rujukan ${i+1}]</span> ${escapeHtml(c.text || c)}</div>`).join('');
+                    } else {
+                        chunksEl.innerText = 'Jawaban disintesis langsung berdasarkan Persona AI Bot & SOP Terindeks.';
+                    }
+                }
+
+                // Append Bot Bubble
+                const botBubble = document.createElement('div');
+                botBubble.className = 'flex items-start gap-2 max-w-[85%]';
+                botBubble.innerHTML = `
+                    <div class="p-3 rounded-2xl rounded-tl-none bg-slate-800 text-slate-100 text-xs shadow-sm space-y-1.5">
+                        <p class="leading-relaxed whitespace-pre-line">${escapeHtml(botReply)}</p>
+                        <div class="flex items-center justify-between text-[9px] text-slate-400 font-mono pt-1 border-t border-slate-700/60">
+                            <span class="text-emerald-400">⚡ ${elapsed}ms</span>
+                            <span>🪙 ${tokensUsed} tokens</span>
+                        </div>
+                    </div>
+                `;
+                container?.appendChild(botBubble);
+                if (container) container.scrollTop = container.scrollHeight;
+            } catch (err) {
+                typingBubble.remove();
+                const errBubble = document.createElement('div');
+                errBubble.className = 'flex items-start gap-2 max-w-[85%]';
+                errBubble.innerHTML = `
+                    <div class="p-3 rounded-2xl bg-rose-950/60 border border-rose-800/60 text-rose-300 text-xs">
+                        Gagal mendapatkan respons AI: ${escapeHtml(err.message)}
+                    </div>
+                `;
+                container?.appendChild(errBubble);
+                if (container) container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        // ===============================================================
+        // BROADCAST & AUTOMATIONS LOGIC
+        // ===============================================================
+        async function handleCreateBroadcast(e) {
+            e.preventDefault();
+            const name = document.getElementById('bc-name')?.value;
+            const recipientsRaw = document.getElementById('bc-recipients')?.value;
+            const content = document.getElementById('bc-content')?.value;
+            const delay = document.getElementById('bc-delay')?.value || 2000;
+
+            if (!name || !recipientsRaw || !content) {
+                Swal.fire('Form Belum Lengkap', 'Nama kampanye, daftar nomor penerima, dan pesan wajib diisi.', 'warning');
+                return;
+            }
+
+            const recipients = recipientsRaw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+
+            Swal.fire({
+                title: 'Mempersiapkan Kampanye Broadcast...',
+                text: `Memvalidasi ${recipients.length} nomor tujuan dan antrean pengiriman...`,
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            try {
+                const res = await fetch("{{ url($config['dashboardUrl']) }}/broadcasts", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
+                    body: JSON.stringify({
+                        name,
+                        recipients,
+                        content,
+                        throttleDelayMs: parseInt(delay, 10),
+                        status: 'QUEUED'
+                    })
+                });
+                const json = await res.json();
+                if (json.success !== false) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Broadcast Diterbitkan!',
+                        text: `Kampanye "${name}" berhasil dibuat dan masuk antrean pengiriman aman.`,
+                        confirmButtonColor: '#10b981'
+                    });
+                    location.reload();
+                } else {
+                    Swal.fire('Gagal Membuat Broadcast', json.error || 'Terjadi kesalahan gateway.', 'error');
+                }
+            } catch (err) {
+                Swal.fire('Error', err.message, 'error');
+            }
+        }
+
+        async function handleSaveBusinessHours(e) {
+            e.preventDefault();
+            const openTime = document.getElementById('bh-open')?.value;
+            const closeTime = document.getElementById('bh-close')?.value;
+            const message = document.getElementById('bh-message')?.value;
+
+            Swal.fire({
+                title: 'Menyimpan Aturan Jam Kerja...',
+                didOpen: () => Swal.showLoading()
+            });
+
+            try {
+                const res = await fetch("{{ url($config['dashboardUrl']) }}/automations/business-hours", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
+                    body: JSON.stringify({ openTime, closeTime, message, enabled: true })
+                });
+                const json = await res.json();
+                if (json.success !== false) {
+                    Swal.fire('Tersimpan', 'Aturan operasional dan pesan penjawab otomatis berhasil diperbarui.', 'success');
+                } else {
+                    Swal.fire('Gagal', json.error || 'Gagal menyimpan.', 'error');
+                }
+            } catch (err) {
+                Swal.fire('Error', err.message, 'error');
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
         // Initialize on page load

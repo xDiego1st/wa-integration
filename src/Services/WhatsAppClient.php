@@ -300,6 +300,118 @@ class WhatsAppClient
         ]);
     }
 
+    public function deleteKnowledgeDocument(string $docId): WhatsAppResponse
+    {
+        return $this->request('delete', "app/ai/knowledge/documents/{$docId}");
+    }
+
+    // ── Chatbot Flows ────────────────────────────────────────────────────
+
+    public function getFlows(): WhatsAppResponse
+    {
+        return $this->request('get', 'app/ai/flows');
+    }
+
+    public function upsertFlow(array $data): WhatsAppResponse
+    {
+        return $this->request('post', 'app/ai/flows', $data);
+    }
+
+    // ── AI CS Playground ─────────────────────────────────────────────────
+
+    public function testPlayground(string $prompt, ?string $personaId = null, ?string $knowledgeBaseId = null, ?string $sessionId = null): WhatsAppResponse
+    {
+        return $this->request('post', 'app/ai/playground/test', [
+            'prompt' => $prompt,
+            'personaId' => $personaId,
+            'knowledgeBaseId' => $knowledgeBaseId,
+            'sessionId' => $sessionId ?? $this->resolveDefaultSessionId(),
+        ]);
+    }
+
+    public function chatPlayground(string $message, ?string $sessionId = null, ?string $personaId = null, ?string $knowledgeBaseId = null): WhatsAppResponse
+    {
+        return $this->request('post', 'app/ai/playground/chat', [
+            'message' => $message,
+            'sessionId' => $sessionId ?? $this->resolveDefaultSessionId(),
+            'personaId' => $personaId,
+            'knowledgeBaseId' => $knowledgeBaseId,
+        ]);
+    }
+
+    // ── Broadcasts & Campaigns ───────────────────────────────────────────
+
+    public function getBroadcasts(int $page = 1, int $perPage = 20, ?string $search = null, ?string $status = null): WhatsAppResponse
+    {
+        $query = ['page' => $page, 'perPage' => $perPage];
+        if ($search) $query['search'] = $search;
+        if ($status) $query['status'] = $status;
+        return $this->request('get', 'app/broadcasts', $query);
+    }
+
+    public function createBroadcast(array $data): WhatsAppResponse
+    {
+        return $this->request('post', 'app/broadcasts', $data);
+    }
+
+    public function getBroadcastStats(string $id): WhatsAppResponse
+    {
+        return $this->request('get', "app/broadcasts/{$id}/stats");
+    }
+
+    // ── Contacts CRM ─────────────────────────────────────────────────────
+
+    public function getContacts(array $filters = []): WhatsAppResponse
+    {
+        return $this->request('get', 'app/contacts', $filters);
+    }
+
+    public function createContact(array $data): WhatsAppResponse
+    {
+        return $this->request('post', 'app/contacts', $data);
+    }
+
+    // ── Teams & Agent Workload ───────────────────────────────────────────
+
+    public function getTeams(): WhatsAppResponse
+    {
+        return $this->request('get', 'app/teams');
+    }
+
+    public function getAgentsWorkload(): WhatsAppResponse
+    {
+        return $this->request('get', 'app/teams/workload');
+    }
+
+    // ── Automations & Business Hours ─────────────────────────────────────
+
+    public function getAutomations(): WhatsAppResponse
+    {
+        return $this->request('get', 'app/automations/rules');
+    }
+
+    public function createAutomationRule(array $data): WhatsAppResponse
+    {
+        return $this->request('post', 'app/automations/rules', $data);
+    }
+
+    public function getBusinessHours(): WhatsAppResponse
+    {
+        return $this->request('get', 'app/automations/business-hours');
+    }
+
+    public function saveBusinessHours(array $data): WhatsAppResponse
+    {
+        return $this->request('put', 'app/automations/business-hours', $data);
+    }
+
+    // ── Customer Service Analytics Overview ──────────────────────────────
+
+    public function getAnalyticsOverview(string $period = '7d'): WhatsAppResponse
+    {
+        return $this->request('get', 'app/analytics/overview', ['period' => $period]);
+    }
+
     // ── AI Analytics ─────────────────────────────────────────────────────
 
     public function getAiUsageSummary(): WhatsAppResponse
