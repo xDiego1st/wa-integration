@@ -2,16 +2,16 @@
 
 namespace WaIntegration\Laravel;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
-use WaIntegration\Laravel\Services\WhatsAppClient;
+use Illuminate\Support\ServiceProvider;
 use WaIntegration\Laravel\Console\Commands\WhatsAppInstallCommand;
 use WaIntegration\Laravel\Console\Commands\WhatsAppStatusCommand;
 use WaIntegration\Laravel\Console\Commands\WhatsAppTestSendCommand;
 use WaIntegration\Laravel\Console\Commands\WhatsAppUninstallCommand;
-use WaIntegration\Laravel\Http\Controllers\WhatsAppWebhookController;
 use WaIntegration\Laravel\Http\Controllers\WhatsAppDashboardController;
+use WaIntegration\Laravel\Http\Controllers\WhatsAppWebhookController;
 use WaIntegration\Laravel\Http\Livewire\WhatsAppConnectionCard;
+use WaIntegration\Laravel\Services\WhatsAppClient;
 
 class WhatsAppServiceProvider extends ServiceProvider
 {

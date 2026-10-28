@@ -383,7 +383,8 @@ class WhatsAppDashboardController extends Controller
     public function getConversations(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $filters = $request->only(['status', 'mode', 'search', 'page', 'perPage']);
         $res = WhatsApp::getConversations($filters);
@@ -393,7 +394,8 @@ class WhatsAppDashboardController extends Controller
     public function getConversation(Request $request, string $id)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $res = WhatsApp::getConversation($id);
         return response()->json($res->json(), $res->statusCode());
@@ -402,7 +404,8 @@ class WhatsAppDashboardController extends Controller
     public function sendConversationReply(Request $request, string $id)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $content = $request->input('content', '');
         $res = WhatsApp::sendConversationReply($id, $content);
@@ -412,7 +415,8 @@ class WhatsAppDashboardController extends Controller
     public function takeoverConversation(Request $request, string $id)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $res = WhatsApp::takeoverConversation($id);
         return response()->json($res->json(), $res->statusCode());
@@ -421,7 +425,8 @@ class WhatsAppDashboardController extends Controller
     public function returnConversationToBot(Request $request, string $id)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $res = WhatsApp::returnConversationToBot($id);
         return response()->json($res->json(), $res->statusCode());
@@ -430,7 +435,8 @@ class WhatsAppDashboardController extends Controller
     public function resolveConversation(Request $request, string $id)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $res = WhatsApp::resolveConversation($id);
         return response()->json($res->json(), $res->statusCode());
@@ -439,7 +445,8 @@ class WhatsAppDashboardController extends Controller
     public function addConversationNote(Request $request, string $id)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $content = $request->input('content', '');
         $res = WhatsApp::addConversationNote($id, $content);
@@ -451,10 +458,30 @@ class WhatsAppDashboardController extends Controller
     public function updateBotConfig(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $data = $request->all();
         $sessionId = $request->input('sessionId');
+        $botMode = $data['botMode'] ?? null;
+        $apiKey = trim($data['apiKey'] ?? '');
+
+        // Precondition check: Cannot activate bot if token is not provided and not present in existing config
+        if ($botMode && $botMode !== 'DISABLED' && empty($apiKey)) {
+            $configRes = WhatsApp::getBotConfig($sessionId);
+            if ($configRes->isSuccessful()) {
+                $cfg = $configRes->data();
+                $hasKey = !empty($cfg['apiKeyMasked']) || !empty($cfg['isPlatformManaged']);
+                if (!$hasKey) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Token OpenRouter wajib diisi sebelum Bot AI dapat diaktifkan.',
+                        'message' => 'Token OpenRouter wajib diisi sebelum Bot AI dapat diaktifkan.'
+                    ], 400);
+                }
+            }
+        }
+
         $res = WhatsApp::updateBotConfig($data, $sessionId);
         return response()->json($res->json(), $res->statusCode());
     }
@@ -462,10 +489,28 @@ class WhatsAppDashboardController extends Controller
     public function toggleBot(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $enabled = $request->boolean('enabled', true);
         $sessionId = $request->input('sessionId');
+
+        // Precondition check: Cannot enable bot if OpenRouter token has not been entered
+        if ($enabled) {
+            $configRes = WhatsApp::getBotConfig($sessionId);
+            if ($configRes->isSuccessful()) {
+                $cfg = $configRes->data();
+                $hasKey = !empty($cfg['apiKeyMasked']) || !empty($cfg['isPlatformManaged']);
+                if (!$hasKey) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Token OpenRouter wajib diisi sebelum Bot AI dapat diaktifkan.',
+                        'message' => 'Token OpenRouter wajib diisi sebelum Bot AI dapat diaktifkan.'
+                    ], 400);
+                }
+            }
+        }
+
         $res = WhatsApp::toggleBot($enabled, $sessionId);
         return response()->json($res->json(), $res->statusCode());
     }
@@ -473,7 +518,8 @@ class WhatsAppDashboardController extends Controller
     public function upsertPersona(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $data = $request->all();
         $res = WhatsApp::upsertPersona($data);
@@ -483,7 +529,8 @@ class WhatsAppDashboardController extends Controller
     public function chatPlayground(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $message = $request->input('message', '');
         $sessionId = $request->input('sessionId');
@@ -497,7 +544,8 @@ class WhatsAppDashboardController extends Controller
     public function testPlayground(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $prompt = $request->input('prompt', '');
         $personaId = $request->input('personaId');
@@ -513,7 +561,8 @@ class WhatsAppDashboardController extends Controller
     public function getKnowledgeBases(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $res = WhatsApp::getKnowledgeBases();
         return response()->json($res->json(), $res->statusCode());
@@ -522,7 +571,8 @@ class WhatsAppDashboardController extends Controller
     public function createKnowledgeBase(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $name = $request->input('name');
         $description = $request->input('description');
@@ -533,7 +583,8 @@ class WhatsAppDashboardController extends Controller
     public function addKnowledgeDocument(Request $request, string $id)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $title = $request->input('title');
         $content = $request->input('content');
@@ -546,7 +597,8 @@ class WhatsAppDashboardController extends Controller
     public function deleteKnowledgeDocument(Request $request, string $docId)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $res = WhatsApp::deleteKnowledgeDocument($docId);
         return response()->json($res->json(), $res->statusCode());
@@ -557,7 +609,8 @@ class WhatsAppDashboardController extends Controller
     public function getFlows(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $res = WhatsApp::getFlows();
         return response()->json($res->json(), $res->statusCode());
@@ -566,7 +619,8 @@ class WhatsAppDashboardController extends Controller
     public function upsertFlow(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $data = $request->all();
         $res = WhatsApp::upsertFlow($data);
@@ -578,7 +632,8 @@ class WhatsAppDashboardController extends Controller
     public function getBroadcasts(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $page = (int) $request->input('page', 1);
         $perPage = (int) $request->input('perPage', 20);
@@ -592,7 +647,8 @@ class WhatsAppDashboardController extends Controller
     public function createBroadcast(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $data = $request->all();
         $res = WhatsApp::createBroadcast($data);
@@ -602,7 +658,8 @@ class WhatsAppDashboardController extends Controller
     public function getBroadcastStats(Request $request, string $id)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $res = WhatsApp::getBroadcastStats($id);
         return response()->json($res->json(), $res->statusCode());
@@ -613,7 +670,8 @@ class WhatsAppDashboardController extends Controller
     public function getTeams(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $res = WhatsApp::getTeams();
         return response()->json($res->json(), $res->statusCode());
@@ -622,7 +680,8 @@ class WhatsAppDashboardController extends Controller
     public function getAgentsWorkload(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $res = WhatsApp::getAgentsWorkload();
         return response()->json($res->json(), $res->statusCode());
@@ -633,7 +692,8 @@ class WhatsAppDashboardController extends Controller
     public function getAutomations(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $res = WhatsApp::getAutomations();
         return response()->json($res->json(), $res->statusCode());
@@ -642,7 +702,8 @@ class WhatsAppDashboardController extends Controller
     public function createAutomationRule(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $data = $request->all();
         $res = WhatsApp::createAutomationRule($data);
@@ -652,7 +713,8 @@ class WhatsAppDashboardController extends Controller
     public function getBusinessHours(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $res = WhatsApp::getBusinessHours();
         return response()->json($res->json(), $res->statusCode());
@@ -661,7 +723,8 @@ class WhatsAppDashboardController extends Controller
     public function saveBusinessHours(Request $request)
     {
         $authCheck = $this->authorizeAccess($request);
-        if ($authCheck) return $authCheck;
+        if ($authCheck)
+            return $authCheck;
 
         $data = $request->all();
         $res = WhatsApp::saveBusinessHours($data);

@@ -865,6 +865,19 @@
                     </div>
                 </div>
 
+                @if(empty($botMaskedKey))
+                    <!-- Precondition Helper Alert: Bot is disabled by default until OpenRouter token is provided -->
+                    <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-amber-300 text-xs flex items-start gap-3 shadow-sm">
+                        <svg class="w-5 h-5 shrink-0 text-amber-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        <div class="space-y-1">
+                            <span class="font-bold text-amber-200">Bot AI Berstatus Default Nonaktif:</span>
+                            <p class="text-amber-300/90 leading-relaxed">
+                                Ketika nomor WhatsApp Anda terhubung, bot secara otomatis diset <strong>NONAKTIF (DISABLED)</strong>. Sebagai syarat untuk mengaktifkan bot, Anda wajib memasukkan <strong>Token OpenRouter</strong> Anda masing-masing pada formulir kredensial di bawah ini.
+                            </p>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- 2. AI Router Configuration Form (Input Token & Provider) -->
                 <div class="rounded-2xl p-5 sm:p-6 bg-slate-950/70 border border-slate-800/80 space-y-5">
                     <div class="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-slate-800">
@@ -3335,9 +3348,31 @@ curl -X POST "{{ $config["baseUrl"] }}/messages" \\
             }
         }
 
+        const hasActiveAiToken = {{ !empty($botMaskedKey) ? 'true' : 'false' }};
+
         async function toggleAiBotState(targetSessionId = null) {
             const newActive = !isAiBotCurrentlyActive;
             const actionText = newActive ? 'mengaktifkan' : 'menonaktifkan';
+
+            // Syarat aktif: konsumen wajib memasukkan token OpenRouter terlebih dahulu
+            if (newActive && !hasActiveAiToken) {
+                await Swal.fire({
+                    icon: 'warning',
+                    title: 'Token OpenRouter Wajib Diisi',
+                    html: '<div class="text-left text-xs text-slate-300 space-y-2 leading-relaxed">' +
+                          '<p>Untuk mengaktifkan Bot AI, Anda <b>wajib memasukkan Token OpenRouter</b> terlebih dahulu.</p>' +
+                          '<p>Silakan isi token pada formulir <b>Kredensial Token AI Router</b> di bawah ini lalu klik <b>Simpan Konfigurasi</b>.</p>' +
+                          '</div>',
+                    confirmButtonText: 'Isi Token Sekarang',
+                    confirmButtonColor: '#9333ea',
+                });
+                const tokenInput = document.getElementById('ai-router-token');
+                if (tokenInput) {
+                    tokenInput.focus();
+                    tokenInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
 
             const confirm = await Swal.fire({
                 title: `${newActive ? 'Aktifkan' : 'Nonaktifkan'} Bot AI?`,
@@ -3393,7 +3428,7 @@ curl -X POST "{{ $config["baseUrl"] }}/messages" \\
                     Swal.fire('Gagal Mengubah Status Bot', json.error || 'Terjadi kesalahan.', 'error');
                 }
             } catch (err) {
-                Swal.fire('Error', err.message, 'error');
+                Swal.fire('Gagal Mengubah Status Bot', err.message, 'error');
             }
         }
 
@@ -3405,6 +3440,22 @@ curl -X POST "{{ $config["baseUrl"] }}/messages" \\
             const botMode = document.getElementById('ai-bot-mode')?.value;
             const fallbackMessage = document.getElementById('ai-fallback-msg')?.value;
             const sessionId = document.getElementById('ai-session-id')?.value || null;
+
+            // Syarat aktif: jika mode bukan DISABLED, token wajib diisi (jika belum ada token tersimpan)
+            if (botMode !== 'DISABLED' && !apiKey && !hasActiveAiToken) {
+                await Swal.fire({
+                    icon: 'warning',
+                    title: 'Token OpenRouter Wajib Diisi',
+                    html: '<div class="text-left text-xs text-slate-300 space-y-2 leading-relaxed">' +
+                          '<p>Mode bot yang dipilih aktif (<b>' + botMode + '</b>), namun Anda belum memasukkan <b>Token OpenRouter</b>.</p>' +
+                          '<p>Silakan isi token OpenRouter Anda terlebih dahulu, atau pilih strategi respon <b>DISABLED</b> jika belum ingin mengaktifkan bot.</p>' +
+                          '</div>',
+                    confirmButtonText: 'Isi Token Sekarang',
+                    confirmButtonColor: '#9333ea',
+                });
+                document.getElementById('ai-router-token')?.focus();
+                return;
+            }
 
             Swal.fire({
                 title: 'Menyimpan Kredensial AI Router...',

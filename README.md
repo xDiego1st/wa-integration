@@ -13,7 +13,8 @@ Begitu di-install, aplikasi Anda **langsung mendapatkan halaman manajemen WhatsA
 
 ## Fitur Utama
 
-- **Kontrol Bot AI & Token AI Router Mandiri (`/waku/dashboard` v1.2.5)**: Sakelar toggle langsung untuk mengaktifkan atau menonaktifkan Bot AI per sesi, serta formulir input mandiri Token AI Router (OpenRouter, Google Gemini, OpenAI) dengan enkripsi AES-256-GCM dan masked display.
+- **Default Nonaktif & Validasi Token OpenRouter (`/waku/dashboard` v1.2.6)**: Bot AI secara default diset nonaktif (`DISABLED`) ketika konsumen pertama kali menghubungkan nomor WhatsApp mereka. Syarat mutlak untuk mengaktifkan respons bot adalah konsumen wajib menginputkan Token OpenRouter (`apiKey` AI Router) mereka masing-masing terlebih dahulu, dengan proteksi validasi menyeluruh di sisi UI dan API backend.
+- **Kontrol Bot AI & Token AI Router Mandiri (`/waku/dashboard`)**: Sakelar toggle langsung untuk mengaktifkan atau menonaktifkan Bot AI per sesi, serta formulir input mandiri Token AI Router (OpenRouter, Google Gemini, OpenAI) dengan enkripsi AES-256-GCM dan masked display.
 - **Halaman Manajemen Bawaan (`/waku/dashboard`)**: Dashboard visual instan dengan **Live QR Code Modal (Baileys Multi-Device)**, panel **Live Chat Inbox**, tema Dark/Light mode adaptif, polling otomatis, status koneksi perangkat, dan realistic WhatsApp chat preview sandbox.
 - **Multi-Tenant Bot Key & BYOK (`withBot()`)**: Dukungan routing pesan ke bot tenant tertentu (`wbk_live_...`) dengan kredensial AI Provider (OpenRouter, Google Gemini, OpenAI) terenkripsi AES-256-GCM.
 - **Perbaikan Inbox Obrolan Handover**: Perbaikan penanganan status HTTP integer untuk mencegah error JSON parsing pada live inbox obrolan.
