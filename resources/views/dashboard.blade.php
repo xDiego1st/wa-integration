@@ -347,9 +347,9 @@
                 </button>
 
                 <button type="button" onclick="switchTab('tab-byok-bot')" id="btn-tab-byok-bot" class="tab-btn inline-flex items-center gap-1.5 py-2 px-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                    <span>Bot &amp; BYOK AI</span>
-                    <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">BYOK</span>
+                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <span>AI Bot &amp; Router</span>
+                    <span id="nav-pill-bot-status" class="px-1.5 py-0.5 rounded-full text-[9px] font-bold {{ ($botConfig['botMode'] ?? 'HYBRID') !== 'DISABLED' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-slate-800 text-slate-400 border border-slate-700' }}">{{ ($botConfig['botMode'] ?? 'HYBRID') !== 'DISABLED' ? 'Aktif' : 'Off' }}</span>
                 </button>
 
                 <button type="button" onclick="switchTab('tab-knowledge')" id="btn-tab-knowledge" class="tab-btn inline-flex items-center gap-1.5 py-2 px-2.5 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition-all">
@@ -806,105 +806,254 @@
         </div>
 
         <!-- =============================================================== -->
-        <!-- TAB 2: BOT & BYOK AI MANAGEMENT (BARU DI v1.2.2)               -->
+        <!-- TAB: AI BOT & AI ROUTER TOKEN (BYOK v1.2.5)                     -->
         <!-- =============================================================== -->
         <div id="tab-byok-bot" class="tab-content hidden space-y-6">
+            @php
+                $activeBotMode = $botConfig['botMode'] ?? 'HYBRID';
+                $isBotActive = $activeBotMode !== 'DISABLED';
+                $botProvider = $botConfig['providerType'] ?? 'OPENROUTER';
+                $botModel = $botConfig['modelName'] ?? 'openrouter/free';
+                $botMaskedKey = $botConfig['apiKeyMasked'] ?? null;
+                $botFallbackMsg = $botConfig['fallbackMessage'] ?? 'Mohon maaf, asisten AI kami sedang mengalami kendala. Admin manusia kami akan segera membalas pesan Anda.';
+            @endphp
+
             <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl border-purple-500/20">
-                <div class="flex items-center justify-between flex-wrap gap-3">
+                <!-- Header Title & Status -->
+                <div class="flex items-center justify-between flex-wrap gap-4">
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="p-2 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                             </span>
-                            <h2 class="text-base sm:text-lg font-bold text-slate-100">Multi-Tenant Bot Key &amp; BYOK (Bring Your Own Key)</h2>
-                            <span class="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">v1.2.2 Release</span>
+                            <h2 class="text-base sm:text-lg font-bold text-slate-100">Kontrol Bot AI &amp; Token AI Router (BYOK)</h2>
+                            <span class="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">v1.2.5</span>
                         </div>
-                        <p class="text-xs text-slate-400 mt-1">Setiap Bot memiliki <strong>Bot Key</strong> terisolasi (<code class="font-mono text-purple-300">wbk_live_...</code>) dan kredensial AI Provider (OpenRouter, Gemini, OpenAI) terenkripsi AES-256-GCM.</p>
+                        <p class="text-xs text-slate-400 mt-1">
+                            Setiap konsumen memiliki kontrol penuh untuk mengaktifkan/menonaktifkan bot dan menghubungkan <strong>Token AI Router</strong> (OpenRouter / Provider) masing-masing. Kredensial tersimpan aman dengan enkripsi AES-256-GCM.
+                        </p>
                     </div>
 
-                    @if($defaultBotKey)
-                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800/60 text-xs shadow-xs">
-                            <span class="text-slate-500 dark:text-slate-400 font-medium">Default Bot Key:</span>
-                            <button type="button" onclick="copySnippet('{{ $defaultBotKey }}', 'Bot Key Disalin!')" class="font-mono font-bold text-purple-700 dark:text-purple-300 hover:text-purple-900 dark:hover:text-purple-200 flex items-center gap-1.5">
-                                {{ Str::limit($defaultBotKey, 18) }}
-                                <svg class="w-3.5 h-3.5 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                            </button>
-                        </div>
-                    @endif
+                    <!-- Bot Global Status Badge -->
+                    <div id="bot-status-container" class="flex items-center gap-3">
+                        <span id="badge-bot-global" class="px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-2 {{ $isBotActive ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-slate-800 text-slate-400 border-slate-700' }}">
+                            <span class="w-2 h-2 rounded-full {{ $isBotActive ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500' }}" id="dot-bot-global"></span>
+                            <span id="text-bot-global">{{ $isBotActive ? 'Bot AI Aktif' : 'Bot AI Dinonaktifkan' }}</span>
+                        </span>
+                    </div>
                 </div>
 
-                <!-- Bot List Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    @forelse($botsList as $bot)
-                        @php
-                            $bName = $bot['name'] ?? 'AI CS Bot';
-                            $bKey = $bot['botKey'] ?? 'wbk_live_...';
-                            $bProv = $bot['providerType'] ?? 'OPENROUTER';
-                            $bModel = $bot['modelName'] ?? 'meta-llama/llama-3.3-70b-instruct:free';
-                            $bStatus = $bot['status'] ?? 'ACTIVE';
-                        @endphp
-                        <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-purple-500/40 transition-all space-y-3.5 shadow-sm">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold text-xs border border-purple-500/20">
-                                        AI
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-sm text-slate-200">{{ $bName }}</h4>
-                                        <span class="text-[10px] text-slate-400 font-mono">{{ $bProv }}</span>
-                                    </div>
-                                </div>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $bStatus === 'ACTIVE' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-400' }}">
-                                    {{ $bStatus }}
-                                </span>
+                <!-- 1. Quick Master Switch Card (Aktifkan / Nonaktifkan Bot AI) -->
+                <div class="p-5 sm:p-6 rounded-2xl bg-gradient-to-r {{ $isBotActive ? 'from-emerald-950/40 via-slate-900 to-slate-900 border-emerald-500/30' : 'from-slate-900 via-slate-900 to-slate-950 border-slate-800' }} border transition-all shadow-md flex items-center justify-between flex-wrap gap-4" id="bot-toggle-card">
+                    <div class="space-y-1 max-w-xl">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-bold text-slate-200">Sakelar Utama Bot AI Pelanggan</span>
+                            <span id="label-bot-mode-pill" class="text-[10px] font-mono px-2 py-0.5 rounded-md font-bold {{ $isBotActive ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-slate-800 text-slate-400 border border-slate-700' }}">
+                                Mode: {{ $activeBotMode }}
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Aktifkan sakelar ini agar asisten virtual langsung menjawab pesan WhatsApp masuk secara cerdas dan otomatis. Nonaktifkan jika Anda ingin menangguhkan bot dan melayani seluruh pesan secara manual melalui tab Live Chat Inbox.
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <button type="button" id="btn-toggle-bot-action" onclick="toggleAiBotState()" class="px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2.5 shadow-lg transition-all cursor-pointer {{ $isBotActive ? 'bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/30' }}">
+                            <svg class="w-4 h-4 {{ $isBotActive ? 'text-rose-400' : 'text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            <span id="btn-toggle-bot-text">{{ $isBotActive ? 'Nonaktifkan Bot AI' : 'Aktifkan Bot AI Sekarang' }}</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. AI Router Configuration Form (Input Token & Provider) -->
+                <div class="rounded-2xl p-5 sm:p-6 bg-slate-950/70 border border-slate-800/80 space-y-5">
+                    <div class="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-slate-800">
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                                <span>Kredensial Token AI Router &amp; Konfigurasi Model</span>
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Masukkan token router AI Anda sendiri untuk kontrol biaya mandiri dan kebebasan memilih ratusan model LLM.</p>
+                        </div>
+
+                        @if(!empty($botMaskedKey))
+                            <div class="flex items-center gap-2 px-3 py-1 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs">
+                                <span class="text-slate-400">Token Aktif:</span>
+                                <span class="font-mono font-bold text-purple-300">{{ $botMaskedKey }}</span>
+                                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            </div>
+                        @endif
+                    </div>
+
+                    <form onsubmit="handleSaveAiRouterConfig(event)" class="space-y-4">
+                        <input type="hidden" id="ai-session-id" value="{{ $sessions[0]['id'] ?? ($botConfig['whatsappSessionId'] ?? '') }}">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Provider Selection -->
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
+                                    <span>Penyedia AI / Gateway <span class="text-rose-400">*</span></span>
+                                    <span class="text-[10px] text-purple-400 font-mono">Multi-Provider Router</span>
+                                </label>
+                                <select id="ai-provider-type" onchange="handleAiProviderChange()" class="w-full px-3 py-2.5 text-xs rounded-xl bg-slate-900 border border-slate-700 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors">
+                                    <option value="OPENROUTER" {{ $botProvider === 'OPENROUTER' ? 'selected' : '' }}>OpenRouter (Direkomendasikan - Semua Model LLM)</option>
+                                    <option value="GEMINI" {{ $botProvider === 'GEMINI' ? 'selected' : '' }}>Google Gemini (Gemini 2.0 Flash / Pro)</option>
+                                    <option value="OPENAI" {{ $botProvider === 'OPENAI' ? 'selected' : '' }}>OpenAI (GPT-4o / GPT-4o-mini)</option>
+                                </select>
                             </div>
 
-                            <div class="space-y-1">
-                                <div class="text-[11px] text-slate-400 font-medium">Model AI:</div>
-                                <div class="p-2 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-slate-300 truncate">
-                                    {{ $bModel }}
-                                </div>
-                            </div>
-
-                            <div class="space-y-1">
-                                <div class="flex items-center justify-between text-[11px]">
-                                    <span class="text-slate-400 font-medium">Bot Key:</span>
-                                    <button type="button" onclick="copySnippet('{{ $bKey }}', 'Bot Key Disalin!')" class="text-purple-400 hover:text-purple-300 font-bold transition-colors">
-                                        Salin
+                            <!-- Token Input with Eye Toggle -->
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
+                                    <span>Token AI Router / API Key <span class="text-rose-400">*</span></span>
+                                    <a href="https://openrouter.ai/keys" target="_blank" rel="noopener" class="text-[10px] text-purple-400 hover:text-purple-300 underline flex items-center gap-1">
+                                        <span>Dapatkan Token OpenRouter</span>
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                    </a>
+                                </label>
+                                <div class="relative">
+                                    <input type="password" id="ai-router-token" placeholder="{{ !empty($botMaskedKey) ? '•••••••••••••••• (Biarkan kosong jika tidak diubah)' : 'sk-or-v1-xxxxxxxxxxxxxxxxxxxx' }}" class="w-full pl-3 pr-10 py-2.5 text-xs rounded-xl bg-slate-900 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-purple-500 font-mono transition-colors">
+                                    <button type="button" onclick="toggleTokenVisibility('ai-router-token')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-200 transition-colors cursor-pointer">
+                                        <svg class="w-4 h-4" id="icon-eye-ai-router-token" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                     </button>
                                 </div>
-                                <div class="p-2 rounded-xl bg-slate-950 border border-slate-800 font-mono text-[11px] text-purple-300 truncate flex items-center justify-between">
-                                    <span>{{ Str::limit($bKey, 20) }}</span>
-                                    <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                                </div>
+                                <span class="text-[10px] text-slate-500 mt-1 block">Terenkripsi AES-256-GCM. Kunci rahasia tidak pernah ditampilkan secara utuh demi keamanan.</span>
                             </div>
                         </div>
-                    @empty
-                        <div class="col-span-full p-8 text-center rounded-2xl border border-dashed border-slate-800 bg-slate-900/40 space-y-2">
-                            <p class="text-sm font-semibold text-slate-300">Belum Ada Bot Terdaftar Pada Tenant Ini</p>
-                            <p class="text-xs text-slate-400 max-w-md mx-auto">
-                                Buka Dashboard PlatformCore master di <code class="font-mono text-emerald-400">/dashboard/ai-cs/settings</code> untuk menambahkan bot baru atau mengonfigurasi BYOK provider Anda.
-                            </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                            <!-- Model Name -->
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
+                                    <span>Model Identifier <span class="text-rose-400">*</span></span>
+                                    <span class="text-[10px] text-slate-400">Contoh: deepseek/deepseek-chat</span>
+                                </label>
+                                <input type="text" id="ai-model-name" value="{{ $botModel }}" placeholder="openrouter/free" class="w-full px-3 py-2.5 text-xs rounded-xl bg-slate-900 border border-slate-700 text-slate-200 focus:outline-none focus:border-purple-500 font-mono transition-colors">
+                                
+                                <!-- Preset Pills -->
+                                <div class="flex items-center gap-1.5 flex-wrap mt-2">
+                                    <span class="text-[10px] text-slate-500">Rekomendasi:</span>
+                                    <button type="button" onclick="selectModelPreset('openrouter/free')" class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-slate-800 hover:bg-purple-900/40 text-purple-300 border border-slate-700 transition-colors">openrouter/free</button>
+                                    <button type="button" onclick="selectModelPreset('deepseek/deepseek-chat')" class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-slate-800 hover:bg-purple-900/40 text-purple-300 border border-slate-700 transition-colors">deepseek-chat</button>
+                                    <button type="button" onclick="selectModelPreset('meta-llama/llama-3.3-70b-instruct')" class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-slate-800 hover:bg-purple-900/40 text-purple-300 border border-slate-700 transition-colors">llama-3.3-70b</button>
+                                    <button type="button" onclick="selectModelPreset('google/gemini-2.5-flash')" class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-slate-800 hover:bg-purple-900/40 text-purple-300 border border-slate-700 transition-colors">gemini-flash</button>
+                                </div>
+                            </div>
+
+                            <!-- Bot Response Mode -->
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1.5">
+                                    <span>Strategi Respon Bot</span>
+                                </label>
+                                <select id="ai-bot-mode" class="w-full px-3 py-2.5 text-xs rounded-xl bg-slate-900 border border-slate-700 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors">
+                                    <option value="HYBRID" {{ $activeBotMode === 'HYBRID' ? 'selected' : '' }}>HYBRID — Alur Menu Chatbot + AI Grounded (Direkomendasikan)</option>
+                                    <option value="AI_ONLY" {{ $activeBotMode === 'AI_ONLY' ? 'selected' : '' }}>AI_ONLY — Respons Full AI Berdasarkan Dokumen Knowledge</option>
+                                    <option value="MENU_ONLY" {{ $activeBotMode === 'MENU_ONLY' ? 'selected' : '' }}>MENU_ONLY — Alur Menu Interaktif Saja (Tanpa AI)</option>
+                                    <option value="DISABLED" {{ $activeBotMode === 'DISABLED' ? 'selected' : '' }}>DISABLED — Nonaktifkan Semua Respon Otomatis</option>
+                                </select>
+                                <span class="text-[10px] text-slate-500 mt-1 block">Mode HYBRID akan mendahulukan menu cepat dan otomatis menggunakan AI jika kata kunci tidak cocok.</span>
+                            </div>
                         </div>
-                    @endforelse
+
+                        <!-- Fallback Message -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">
+                                <span>Pesan Fallback / Penanganan Kendala</span>
+                            </label>
+                            <textarea id="ai-fallback-msg" rows="2" class="w-full p-3 text-xs rounded-xl bg-slate-900 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-colors">{{ $botFallbackMsg }}</textarea>
+                            <span class="text-[10px] text-slate-500 mt-1 block">Pesan yang otomatis dikirim ke pelanggan jika terjadi gangguan koneksi ke AI provider atau kuota token habis.</span>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="flex items-center justify-end gap-3 pt-2">
+                            <button type="submit" id="btn-save-ai-config" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-purple-600/30 transition-all flex items-center gap-2 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <span>Simpan Konfigurasi AI Router</span>
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
-                <!-- Code Example: withBot usage -->
+                <!-- 3. WhatsApp Sessions & Bot Active Status Table -->
+                <div class="space-y-3 pt-2">
+                    <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                        <span>Status Bot per Sesi WhatsApp Konsumen</span>
+                    </h3>
+                    <div class="rounded-2xl border border-slate-800 bg-slate-950 overflow-hidden">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-900/80 text-slate-400 font-semibold border-b border-slate-800">
+                                <tr>
+                                    <th class="py-3 px-4">Nama Sesi</th>
+                                    <th class="py-3 px-4">Nomor WhatsApp</th>
+                                    <th class="py-3 px-4">Status Koneksi</th>
+                                    <th class="py-3 px-4">Status Bot AI</th>
+                                    <th class="py-3 px-4 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800/60">
+                                @forelse($sessions as $sess)
+                                    @php
+                                        $sId = $sess['id'] ?? '';
+                                        $sName = $sess['name'] ?? 'Default Session';
+                                        $sPhone = $sess['phone'] ?? '-';
+                                        $sStatus = $sess['status'] ?? 'DISCONNECTED';
+                                    @endphp
+                                    <tr class="hover:bg-slate-900/40 transition-colors">
+                                        <td class="py-3 px-4 font-semibold text-slate-200">{{ $sName }}</td>
+                                        <td class="py-3 px-4 font-mono text-slate-300">{{ $sPhone }}</td>
+                                        <td class="py-3 px-4">
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $sStatus === 'CONNECTED' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-400' }}">
+                                                {{ $sStatus }}
+                                            </span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $isBotActive ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/15 text-rose-400 border border-rose-500/30' }}">
+                                                {{ $isBotActive ? 'Aktif (' . $activeBotMode . ')' : 'Nonaktif' }}
+                                            </span>
+                                        </td>
+                                        <td class="py-3 px-4 text-right">
+                                            <button type="button" onclick="toggleAiBotState('{{ $sId }}')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-colors cursor-pointer {{ $isBotActive ? 'bg-rose-950/40 border-rose-800/40 text-rose-300 hover:bg-rose-900/60' : 'bg-emerald-950/40 border-emerald-800/40 text-emerald-300 hover:bg-emerald-900/60' }}">
+                                                {{ $isBotActive ? 'Nonaktifkan' : 'Aktifkan' }}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="py-6 text-center text-slate-500 text-xs">
+                                            Belum ada sesi WhatsApp terhubung. Silakan scan QR code pada tab Koneksi.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 4. Developer SDK Code Snippet -->
                 <div class="space-y-2.5 pt-2">
                     <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                         <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-                        <span>Contoh Penggunaan Bot Key di Laravel (v1.2.2)</span>
+                        <span>Kode Penggunaan Bot &amp; BYOK di Laravel (v1.2.5)</span>
                     </h3>
                     <div class="relative group">
-                        <pre class="bg-slate-950 text-slate-100 font-mono text-xs p-4 rounded-2xl overflow-x-auto leading-relaxed border border-slate-800"><code id="code-snippet-byok">// 1. Kirim pesan dengan Bot Key spesifik
+                        <pre class="bg-slate-950 text-slate-100 font-mono text-xs p-4 rounded-2xl overflow-x-auto leading-relaxed border border-slate-800"><code id="code-snippet-byok">// 1. Aktifkan atau Nonaktifkan Bot AI secara programatik
 use WaIntegration\Laravel\Facades\WhatsApp;
 
-WhatsApp::withBot('{{ $defaultBotKey ?? "wbk_live_sample_key" }}')
-    ->send('08123456789', 'Halo! CS Virtual siap melayani pertanyaan Anda.');
+WhatsApp::toggleBot(true); // Aktifkan bot AI
+WhatsApp::toggleBot(false); // Nonaktifkan bot AI
 
-// 2. Ambil daftar Bot yang tersedia di tenant Anda
-$bots = WhatsApp::getBots();</code></pre>
-                        <button type="button" onclick="copySnippet('code-snippet-byok', 'Kode Disalin!')" class="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono transition-colors border border-slate-700">Salin Kode</button>
+// 2. Perbarui Kredensial AI Router Token & Model Sesi
+WhatsApp::updateBotConfig([
+    'providerType' => 'OPENROUTER',
+    'modelName' => 'openrouter/free',
+    'apiKey' => 'sk-or-v1-...', // Token OpenRouter Anda
+    'botMode' => 'HYBRID',
+]);
+
+// 3. Dapatkan Konfigurasi & Status Bot Aktif
+$botConfig = WhatsApp::getBotConfig();</code></pre>
+                        <button type="button" onclick="copySnippet('code-snippet-byok', 'Kode Disalin!')" class="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono transition-colors border border-slate-700 cursor-pointer">Salin Kode</button>
                     </div>
                 </div>
             </div>
@@ -2588,15 +2737,38 @@ curl -X POST "{{ $config["baseUrl"] }}/messages" \\
             }
 
             try {
-                const res = await fetch("{{ url($config['dashboardUrl']) }}/conversations/" + encodeURIComponent(id));
+                const res = await fetch("{{ url($config['dashboardUrl']) }}/conversations/" + encodeURIComponent(id), {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!res.ok) {
+                    let errMsg = `Gagal memuat (HTTP ${res.status})`;
+                    try {
+                        const errJson = await res.json();
+                        errMsg = errJson.error || errJson.message || errMsg;
+                    } catch (_) {
+                        const raw = await res.text();
+                        if (raw.includes('<!DOCTYPE') || raw.includes('<html')) {
+                            errMsg = `Server mengembalikan respon HTML (HTTP ${res.status}). Pastikan endpoint dan autentikasi sesi valid.`;
+                        }
+                    }
+                    throw new Error(errMsg);
+                }
+
                 const json = await res.json();
-                const messages = json.data?.messages || json.messages || [];
+                const messages = json.data?.messages || json.data?.conversation?.messages || json.messages || [];
                 renderTimelineMessages(messages);
             } catch (err) {
                 if (container) {
                     container.innerHTML = `
-                        <div class="p-4 rounded-xl bg-rose-950/40 border border-rose-800/40 text-center text-xs text-rose-300">
-                            Gagal memuat pesan obrolan: ${escapeHtml(err.message)}
+                        <div class="p-4 rounded-xl bg-rose-950/40 border border-rose-800/40 text-center text-xs text-rose-300 space-y-2">
+                            <p class="font-semibold">Gagal memuat pesan obrolan: ${escapeHtml(err.message)}</p>
+                            <button type="button" onclick="loadConversationDetail('${escapeHtml(id)}')" class="px-3 py-1 rounded-lg bg-rose-800/60 hover:bg-rose-700 text-[11px] text-white transition-colors cursor-pointer">
+                                Coba Muat Ulang
+                            </button>
                         </div>
                     `;
                 }
@@ -3117,6 +3289,169 @@ curl -X POST "{{ $config["baseUrl"] }}/messages" \\
                     Swal.fire('Tersimpan', 'Aturan operasional dan pesan penjawab otomatis berhasil diperbarui.', 'success');
                 } else {
                     Swal.fire('Gagal', json.error || 'Gagal menyimpan.', 'error');
+                }
+            } catch (err) {
+                Swal.fire('Error', err.message, 'error');
+            }
+        }
+
+        let isAiBotCurrentlyActive = {{ ($botConfig['botMode'] ?? 'HYBRID') !== 'DISABLED' ? 'true' : 'false' }};
+
+        function toggleTokenVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById('icon-eye-' + inputId);
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (icon) {
+                    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>';
+                }
+            } else {
+                input.type = 'password';
+                if (icon) {
+                    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>';
+                }
+            }
+        }
+
+        function selectModelPreset(modelName) {
+            const input = document.getElementById('ai-model-name');
+            if (input) {
+                input.value = modelName;
+                input.focus();
+            }
+        }
+
+        function handleAiProviderChange() {
+            const prov = document.getElementById('ai-provider-type')?.value;
+            const modelInput = document.getElementById('ai-model-name');
+            if (!modelInput) return;
+            if (prov === 'GEMINI') {
+                modelInput.value = 'google/gemini-2.5-flash';
+            } else if (prov === 'OPENAI') {
+                modelInput.value = 'gpt-4o-mini';
+            } else {
+                modelInput.value = 'openrouter/free';
+            }
+        }
+
+        async function toggleAiBotState(targetSessionId = null) {
+            const newActive = !isAiBotCurrentlyActive;
+            const actionText = newActive ? 'mengaktifkan' : 'menonaktifkan';
+
+            const confirm = await Swal.fire({
+                title: `${newActive ? 'Aktifkan' : 'Nonaktifkan'} Bot AI?`,
+                text: `Apakah Anda yakin ingin ${actionText} bot AI untuk merespons pesan WhatsApp masuk?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: newActive ? '#10b981' : '#f43f5e',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: `Ya, ${newActive ? 'Aktifkan' : 'Nonaktifkan'}`,
+                cancelButtonText: 'Batal'
+            });
+
+            if (!confirm.isConfirmed) return;
+
+            Swal.fire({
+                title: 'Memproses Perubahan Status Bot...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            try {
+                const res = await fetch("{{ url($config['dashboardUrl']) }}/ai/toggle", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': CSRF_TOKEN
+                    },
+                    body: JSON.stringify({
+                        enabled: newActive,
+                        sessionId: targetSessionId || document.getElementById('ai-session-id')?.value || null
+                    })
+                });
+
+                if (!res.ok) {
+                    const errJson = await res.json().catch(() => ({}));
+                    throw new Error(errJson.error || errJson.message || `HTTP ${res.status}`);
+                }
+
+                const json = await res.json();
+                if (json.success !== false) {
+                    isAiBotCurrentlyActive = newActive;
+                    await Swal.fire({
+                        icon: 'success',
+                        title: `Bot AI Berhasil ${newActive ? 'Diaktifkan' : 'Dinonaktifkan'}!`,
+                        text: newActive
+                            ? 'Asisten AI sekarang aktif dan akan membalas pertanyaan pelanggan secara otomatis.'
+                            : 'Bot AI dinonaktifkan. Seluruh pesan masuk dialihkan ke Inbox CS.',
+                        confirmButtonColor: '#10b981'
+                    });
+                    location.reload();
+                } else {
+                    Swal.fire('Gagal Mengubah Status Bot', json.error || 'Terjadi kesalahan.', 'error');
+                }
+            } catch (err) {
+                Swal.fire('Error', err.message, 'error');
+            }
+        }
+
+        async function handleSaveAiRouterConfig(e) {
+            e.preventDefault();
+            const providerType = document.getElementById('ai-provider-type')?.value;
+            const apiKey = document.getElementById('ai-router-token')?.value?.trim();
+            const modelName = document.getElementById('ai-model-name')?.value?.trim();
+            const botMode = document.getElementById('ai-bot-mode')?.value;
+            const fallbackMessage = document.getElementById('ai-fallback-msg')?.value;
+            const sessionId = document.getElementById('ai-session-id')?.value || null;
+
+            Swal.fire({
+                title: 'Menyimpan Kredensial AI Router...',
+                text: 'Mengamankan token dengan enkripsi AES-256-GCM...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            const payload = {
+                providerType,
+                modelName,
+                botMode,
+                fallbackMessage,
+                sessionId,
+            };
+
+            if (apiKey && apiKey.length > 0) {
+                payload.apiKey = apiKey;
+            }
+
+            try {
+                const res = await fetch("{{ url($config['dashboardUrl']) }}/ai/config", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': CSRF_TOKEN
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    const errJson = await res.json().catch(() => ({}));
+                    throw new Error(errJson.error || errJson.message || `HTTP ${res.status}`);
+                }
+
+                const json = await res.json();
+                if (json.success !== false) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Konfigurasi AI Router Disimpan!',
+                        text: 'Token dan parameter model AI berhasil diperbarui dan aktif digunakan.',
+                        confirmButtonColor: '#10b981'
+                    });
+                    location.reload();
+                } else {
+                    Swal.fire('Gagal Menyimpan', json.error || 'Terjadi kesalahan gateway.', 'error');
                 }
             } catch (err) {
                 Swal.fire('Error', err.message, 'error');

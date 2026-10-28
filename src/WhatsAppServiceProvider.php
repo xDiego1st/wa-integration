@@ -120,6 +120,7 @@ class WhatsAppServiceProvider extends ServiceProvider
 
             // AI CS & BYOK
             Route::post('/ai/config', [WhatsAppDashboardController::class, 'updateBotConfig'])->name('waku.ai.config');
+            Route::post('/ai/toggle', [WhatsAppDashboardController::class, 'toggleBot'])->name('waku.ai.toggle');
             Route::post('/ai/persona', [WhatsAppDashboardController::class, 'upsertPersona'])->name('waku.ai.persona');
             Route::post('/ai/playground/chat', [WhatsAppDashboardController::class, 'chatPlayground'])->name('waku.ai.playground.chat');
             Route::post('/ai/playground/test', [WhatsAppDashboardController::class, 'testPlayground'])->name('waku.ai.playground.test');

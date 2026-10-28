@@ -158,11 +158,13 @@ class WhatsAppDashboardController extends Controller
         $automationsRes = WhatsApp::getAutomations();
         $usageSummaryRes = WhatsApp::getAiUsageSummary();
         $businessHoursRes = WhatsApp::getBusinessHours();
+        $botConfigRes = WhatsApp::getBotConfig();
 
         $appInfo = $appInfoRes->isSuccessful() ? $appInfoRes->data() : null;
         $sessions = $sessionsRes->isSuccessful() ? ($sessionsRes->data() ?? []) : [];
         $messages = $messagesRes->isSuccessful() ? ($messagesRes->data() ?? []) : [];
         $bots = $botsRes->isSuccessful() ? ($botsRes->data() ?? []) : [];
+        $botConfig = $botConfigRes->isSuccessful() ? ($botConfigRes->data() ?? []) : [];
         $conversations = $conversationsRes->isSuccessful() ? ($conversationsRes->data() ?? []) : [];
         $knowledgeBases = $knowledgeRes->isSuccessful() ? ($knowledgeRes->data() ?? []) : [];
         $flows = $flowsRes->isSuccessful() ? ($flowsRes->data() ?? []) : [];
@@ -219,6 +221,7 @@ class WhatsAppDashboardController extends Controller
             'config',
             'currentUser',
             'bots',
+            'botConfig',
             'conversations',
             'knowledgeBases',
             'flows',
@@ -248,7 +251,7 @@ class WhatsAppDashboardController extends Controller
             'status' => $res->status(),
             'data' => $res->data(),
             'error' => $res->error(),
-        ], $res->isSuccessful() ? 200 : $res->status());
+        ], $res->isSuccessful() ? 200 : $res->statusCode());
     }
 
     /**
@@ -384,7 +387,7 @@ class WhatsAppDashboardController extends Controller
 
         $filters = $request->only(['status', 'mode', 'search', 'page', 'perPage']);
         $res = WhatsApp::getConversations($filters);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function getConversation(Request $request, string $id)
@@ -393,7 +396,7 @@ class WhatsAppDashboardController extends Controller
         if ($authCheck) return $authCheck;
 
         $res = WhatsApp::getConversation($id);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function sendConversationReply(Request $request, string $id)
@@ -403,7 +406,7 @@ class WhatsAppDashboardController extends Controller
 
         $content = $request->input('content', '');
         $res = WhatsApp::sendConversationReply($id, $content);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function takeoverConversation(Request $request, string $id)
@@ -412,7 +415,7 @@ class WhatsAppDashboardController extends Controller
         if ($authCheck) return $authCheck;
 
         $res = WhatsApp::takeoverConversation($id);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function returnConversationToBot(Request $request, string $id)
@@ -421,7 +424,7 @@ class WhatsAppDashboardController extends Controller
         if ($authCheck) return $authCheck;
 
         $res = WhatsApp::returnConversationToBot($id);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function resolveConversation(Request $request, string $id)
@@ -430,7 +433,7 @@ class WhatsAppDashboardController extends Controller
         if ($authCheck) return $authCheck;
 
         $res = WhatsApp::resolveConversation($id);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function addConversationNote(Request $request, string $id)
@@ -440,7 +443,7 @@ class WhatsAppDashboardController extends Controller
 
         $content = $request->input('content', '');
         $res = WhatsApp::addConversationNote($id, $content);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     // ── AI CS & BYOK Configuration ───────────────────────────────────────
@@ -453,7 +456,18 @@ class WhatsAppDashboardController extends Controller
         $data = $request->all();
         $sessionId = $request->input('sessionId');
         $res = WhatsApp::updateBotConfig($data, $sessionId);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
+    }
+
+    public function toggleBot(Request $request)
+    {
+        $authCheck = $this->authorizeAccess($request);
+        if ($authCheck) return $authCheck;
+
+        $enabled = $request->boolean('enabled', true);
+        $sessionId = $request->input('sessionId');
+        $res = WhatsApp::toggleBot($enabled, $sessionId);
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function upsertPersona(Request $request)
@@ -463,7 +477,7 @@ class WhatsAppDashboardController extends Controller
 
         $data = $request->all();
         $res = WhatsApp::upsertPersona($data);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function chatPlayground(Request $request)
@@ -477,7 +491,7 @@ class WhatsAppDashboardController extends Controller
         $knowledgeBaseId = $request->input('knowledgeBaseId');
 
         $res = WhatsApp::chatPlayground($message, $sessionId, $personaId, $knowledgeBaseId);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function testPlayground(Request $request)
@@ -491,7 +505,7 @@ class WhatsAppDashboardController extends Controller
         $sessionId = $request->input('sessionId');
 
         $res = WhatsApp::testPlayground($prompt, $personaId, $knowledgeBaseId, $sessionId);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     // ── Knowledge Base ───────────────────────────────────────────────────
@@ -502,7 +516,7 @@ class WhatsAppDashboardController extends Controller
         if ($authCheck) return $authCheck;
 
         $res = WhatsApp::getKnowledgeBases();
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function createKnowledgeBase(Request $request)
@@ -513,7 +527,7 @@ class WhatsAppDashboardController extends Controller
         $name = $request->input('name');
         $description = $request->input('description');
         $res = WhatsApp::createKnowledgeBase($name, $description);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function addKnowledgeDocument(Request $request, string $id)
@@ -526,7 +540,7 @@ class WhatsAppDashboardController extends Controller
         $contentType = $request->input('contentType', 'text/plain');
 
         $res = WhatsApp::addKnowledgeDocument($id, $title, $content, $contentType);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function deleteKnowledgeDocument(Request $request, string $docId)
@@ -535,7 +549,7 @@ class WhatsAppDashboardController extends Controller
         if ($authCheck) return $authCheck;
 
         $res = WhatsApp::deleteKnowledgeDocument($docId);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     // ── Chatbot Flows ────────────────────────────────────────────────────
@@ -546,7 +560,7 @@ class WhatsAppDashboardController extends Controller
         if ($authCheck) return $authCheck;
 
         $res = WhatsApp::getFlows();
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function upsertFlow(Request $request)
@@ -556,7 +570,7 @@ class WhatsAppDashboardController extends Controller
 
         $data = $request->all();
         $res = WhatsApp::upsertFlow($data);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     // ── Broadcasts & Campaigns ───────────────────────────────────────────
@@ -572,7 +586,7 @@ class WhatsAppDashboardController extends Controller
         $status = $request->input('status');
 
         $res = WhatsApp::getBroadcasts($page, $perPage, $search, $status);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function createBroadcast(Request $request)
@@ -582,7 +596,7 @@ class WhatsAppDashboardController extends Controller
 
         $data = $request->all();
         $res = WhatsApp::createBroadcast($data);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function getBroadcastStats(Request $request, string $id)
@@ -591,7 +605,7 @@ class WhatsAppDashboardController extends Controller
         if ($authCheck) return $authCheck;
 
         $res = WhatsApp::getBroadcastStats($id);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     // ── Teams & Agent Workload ───────────────────────────────────────────
@@ -602,7 +616,7 @@ class WhatsAppDashboardController extends Controller
         if ($authCheck) return $authCheck;
 
         $res = WhatsApp::getTeams();
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function getAgentsWorkload(Request $request)
@@ -611,7 +625,7 @@ class WhatsAppDashboardController extends Controller
         if ($authCheck) return $authCheck;
 
         $res = WhatsApp::getAgentsWorkload();
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     // ── Automations & Business Hours ─────────────────────────────────────
@@ -622,7 +636,7 @@ class WhatsAppDashboardController extends Controller
         if ($authCheck) return $authCheck;
 
         $res = WhatsApp::getAutomations();
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function createAutomationRule(Request $request)
@@ -632,7 +646,7 @@ class WhatsAppDashboardController extends Controller
 
         $data = $request->all();
         $res = WhatsApp::createAutomationRule($data);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function getBusinessHours(Request $request)
@@ -641,7 +655,7 @@ class WhatsAppDashboardController extends Controller
         if ($authCheck) return $authCheck;
 
         $res = WhatsApp::getBusinessHours();
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 
     public function saveBusinessHours(Request $request)
@@ -651,6 +665,6 @@ class WhatsAppDashboardController extends Controller
 
         $data = $request->all();
         $res = WhatsApp::saveBusinessHours($data);
-        return response()->json($res->json(), $res->status());
+        return response()->json($res->json(), $res->statusCode());
     }
 }

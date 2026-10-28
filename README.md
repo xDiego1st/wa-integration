@@ -13,8 +13,10 @@ Begitu di-install, aplikasi Anda **langsung mendapatkan halaman manajemen WhatsA
 
 ## Fitur Utama
 
-- **Halaman Manajemen Bawaan (`/waku/dashboard` v1.2.2)**: Dashboard visual instan dengan **Live QR Code Modal (Baileys Multi-Device)**, panel **Bot & BYOK AI**, tema Dark/Light mode adaptif, polling otomatis, status koneksi perangkat, dan realistic WhatsApp chat preview sandbox.
+- **Kontrol Bot AI & Token AI Router Mandiri (`/waku/dashboard` v1.2.5)**: Sakelar toggle langsung untuk mengaktifkan atau menonaktifkan Bot AI per sesi, serta formulir input mandiri Token AI Router (OpenRouter, Google Gemini, OpenAI) dengan enkripsi AES-256-GCM dan masked display.
+- **Halaman Manajemen Bawaan (`/waku/dashboard`)**: Dashboard visual instan dengan **Live QR Code Modal (Baileys Multi-Device)**, panel **Live Chat Inbox**, tema Dark/Light mode adaptif, polling otomatis, status koneksi perangkat, dan realistic WhatsApp chat preview sandbox.
 - **Multi-Tenant Bot Key & BYOK (`withBot()`)**: Dukungan routing pesan ke bot tenant tertentu (`wbk_live_...`) dengan kredensial AI Provider (OpenRouter, Google Gemini, OpenAI) terenkripsi AES-256-GCM.
+- **Perbaikan Inbox Obrolan Handover**: Perbaikan penanganan status HTTP integer untuk mencegah error JSON parsing pada live inbox obrolan.
 - **Proteksi Hak Akses & Role (`config/waku.php`)**: Memerlukan login (`auth`) secara default. Anda dapat membatasi akses ke dashboard hanya untuk peran tertentu (`allowed_roles` seperti `SUPER-ADMIN`, `ADMIN`) atau email tertentu (`allowed_emails`).
 - **Expressive Facade**: Kirim pesan dalam 1 baris kode: `WhatsApp::send('08123456789', 'Halo!');`.
 - **Dukungan Media Lengkap**: Kirim file faktur PDF (`sendDocument`), foto bukti pembayaran (`sendImage`), dan media lainnya.
